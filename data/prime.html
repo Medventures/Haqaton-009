@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Check-up Intelligence — PRIME green clinic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#fdfbf7; --surface:#ffffff; --ink:#14201b; --muted:#5f6f68; --line:#e7e1d6;
+  --green:#06382c; --green2:#0a5443; --gold:#d7a55f; --peach:#fee5c3; --cream:#fff6ec;
+  --on-green:#ffffff; --ok:#0a5443; --warn:#9a5208; --bad:#a33a2a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1613; --surface:#15211c; --ink:#eaf0ec; --muted:#9fb0a8; --line:#26352e;
+    --green:#d7a55f; --green2:#e6bd80; --peach:#3a2e1c; --cream:#1a241f;
+    --on-green:#1a1408; --ok:#7fd1b4; --warn:#e8b36a; --bad:#f08a78;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1613; --surface:#15211c; --ink:#eaf0ec; --muted:#9fb0a8; --line:#26352e;
+  --green:#d7a55f; --green2:#e6bd80; --peach:#3a2e1c; --cream:#1a241f;
+  --on-green:#1a1408; --ok:#7fd1b4; --warn:#e8b36a; --bad:#f08a78;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:inherit;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+button,input,textarea{font:inherit;color:inherit;}
+button{cursor:pointer;}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;}
+.top{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;}
+.topin{display:flex;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:14px;}
+.logo{display:flex;align-items:baseline;gap:8px;}
+.lg{font-weight:700;font-size:20px;letter-spacing:.14em;color:var(--green2);}
+.lgs{font-size:13px;color:var(--gold);font-weight:500;}
+.tabs{display:flex;gap:4px;}
+.tabs button{background:none;border:0;padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:500;}
+.tabs button[aria-pressed="true"]{color:var(--ink);background:var(--cream);}
+.prog{height:2px;background:var(--line);}
+.prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s ease;}
+main{padding-top:40px;padding-bottom:40px;min-height:70vh;}
+h1{font-size:clamp(30px,6vw,44px);line-height:1.1;letter-spacing:-.02em;font-weight:600;margin:0 0 14px;}
+h2{font-size:24px;line-height:1.2;letter-spacing:-.01em;font-weight:600;margin:0 0 8px;}
+h3{font-size:17px;font-weight:600;margin:32px 0 6px;}
+p{margin:0 0 14px;}
+.lead{font-size:18px;color:var(--muted);max-width:56ch;}
+.muted{color:var(--muted);}
+.small{font-size:14px;}
+.back{background:none;border:0;padding:0;color:var(--muted);margin-bottom:24px;}
+.rows{margin-top:28px;border-bottom:1px solid var(--line);}
+.row{display:flex;justify-content:space-between;align-items:center;gap:16px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:18px 4px;}
+.row:hover{background:var(--cream);}
+.row b{display:block;font-weight:600;font-size:18px;}
+.row span{color:var(--muted);font-size:14px;}
+.row i{font-style:normal;color:var(--gold);font-size:20px;}
+.link{background:none;border:0;padding:0;color:var(--green2);text-decoration:underline;text-underline-offset:3px;}
+.btn{display:inline-block;background:var(--green);color:var(--on-green);border:1px solid var(--green);padding:13px 22px;border-radius:10px;font-weight:600;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.ghost{background:none;color:var(--ink);border-color:var(--line);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;padding:9px 16px;}
+.chip[aria-pressed="true"]{background:var(--green);color:var(--on-green);border-color:var(--green);}
+input[type=text],input[type=tel],input[type=number],input[type=date],textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+textarea{min-height:88px;resize:vertical;}
+label.f{display:block;margin:16px 0 6px;font-weight:500;}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.drop{display:block;border:1px dashed var(--muted);border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;margin:20px 0;}
+.drop:hover,.drop.on{background:var(--cream);border-color:var(--gold);}
+.drop input{display:none;}
+.tbl{overflow-x:auto;margin:16px 0;}
+table{border-collapse:collapse;width:100%;font-size:15px;}
+th,td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--line);white-space:nowrap;}
+th{font-weight:500;color:var(--muted);}
+.fl{font-size:13px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);}
+.fl.ok{color:var(--ok);}
+.fl.low,.fl.high{color:var(--warn);border-color:var(--warn);}
+.q{padding:20px 0;border-top:1px solid var(--line);}
+.q b{font-weight:600;}
+.aff{font-size:13px;color:var(--muted);}
+.banner{border:1px solid var(--bad);border-radius:12px;padding:16px;margin:20px 0;}
+.banner b{color:var(--bad);}
+.note{background:var(--cream);border-radius:12px;padding:14px 16px;margin:16px 0;font-size:15px;}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0;}
+.tier{background:none;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:left;}
+.tier b{display:block;font-weight:600;}
+.tier span{color:var(--muted);font-size:14px;}
+.tier[aria-pressed="true"]{border-color:var(--gold);background:var(--cream);box-shadow:inset 0 0 0 1px var(--gold);}
+.it{display:grid;grid-template-columns:24px 1fr auto;gap:12px;padding:14px 0;border-top:1px solid var(--line);align-items:start;}
+.it input{width:20px;height:20px;margin-top:3px;accent-color:var(--green2);}
+.it .nm{font-weight:500;}
+.it .pr{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.pill{display:inline-block;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin:6px 6px 0 0;color:var(--muted);}
+.tag{font-size:13px;color:var(--muted);}
+.gain{color:var(--warn);font-size:13px;}
+details{margin:8px 0;}
+summary{cursor:pointer;font-weight:600;padding:12px 0;}
+.sum{border-top:1px solid var(--line);padding-top:14px;margin-top:20px;font-variant-numeric:tabular-nums;}
+.sum div{display:flex;justify-content:space-between;padding:3px 0;}
+.sum .tot{font-size:20px;font-weight:600;padding-top:10px;}
+.bar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;}
+.bar .p{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;}
+.ai{border-top:1px solid var(--line);margin-top:32px;}
+.msg{padding:10px 14px;border-radius:12px;margin:8px 0;max-width:92%;white-space:pre-wrap;}
+.msg.u{background:var(--cream);margin-left:auto;}
+.msg.a{border:1px solid var(--line);}
+.askrow{display:flex;gap:8px;margin-top:10px;}
+.rt{display:grid;grid-template-columns:60px 1fr;gap:2px 16px;margin:16px 0;}
+.rt .t{font-variant-numeric:tabular-nums;color:var(--green2);font-weight:600;padding:10px 0;border-top:1px solid var(--line);}
+.rt .d{padding:10px 0;border-top:1px solid var(--line);}
+.rt .d span{display:block;color:var(--muted);font-size:14px;}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 16px;margin:12px 0;}
+.kv dt{color:var(--muted);} .kv dd{margin:0;}
+.foot{color:var(--muted);font-size:13px;padding-top:20px;padding-bottom:32px;border-top:1px solid var(--line);}
+.ov{color:var(--bad);}
+@media (max-width:520px){.tiers{grid-template-columns:1fr;}.kv{grid-template-columns:1fr;}.it{grid-template-columns:24px 1fr;}.it .pr{grid-column:2;}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap topin">
+    <div class="logo"><span class="lg">PRIME</span><span class="lgs">green clinic</span></div>
+    <nav class="tabs" aria-label="Режим">
+      <button data-a="view" data-v="patient" aria-pressed="true">Пациент</button>
+      <button data-a="view" data-v="clinic" aria-pressed="false">Для клиники</button>
+    </nav>
+  </div>
+  <div class="prog"><i id="pbar"></i></div>
+</header>
+<main class="wrap" id="app"></main>
+<footer class="wrap foot">Сервис не ставит диагноз, он подбирает обследования. Цены и правила в демо условные: их утверждают врачи и прайс PRIME.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script>
+'use strict';
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => Math.round(n).toLocaleString('ru-RU') + ' ₸';
+const DAY = 864e5;
+const daysAgo = n => new Date(Date.now() - n * DAY);
+const addDays = (d, n) => new Date(d.getTime() + n * DAY);
+const diff = d => Math.floor((Date.now() - d.getTime()) / DAY);
+const fmt = d => d.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', year:'numeric'});
+const hhmm = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const rel = d => { const m = Math.round((d - Date.now()) / DAY / 30); return m > 0 ? 'через ' + m + ' мес.' : m < 0 ? 'просрочено на ' + (-m) + ' мес.' : 'в этом месяце'; };
+
+/* ============ knowledge base (draft: doctors of PRIME approve) ============ */
+// g: lab | inst | consult; p: demo price; v: validity in days; d: minutes; slot: fast | mid | end
+const TESTS = {
+  cbc:{n:'Общий анализ крови',p:2500,v:90,d:0,slot:'fast',lab:1},
+  urine:{n:'Общий анализ мочи',p:1500,v:90,d:0,slot:'fast',lab:1},
+  glu:{n:'Глюкоза крови',p:1200,v:90,d:0,slot:'fast',lab:1},
+  hba1c:{n:'Гликированный гемоглобин',p:4500,v:180,d:0,slot:'fast',lab:1},
+  lipid:{n:'Липидограмма',p:6000,v:180,d:0,slot:'fast',lab:1},
+  liver:{n:'Печёночные пробы (АЛТ, АСТ)',p:3000,v:90,d:0,slot:'fast',lab:1},
+  kidney:{n:'Креатинин',p:1500,v:90,d:0,slot:'fast',lab:1},
+  tsh:{n:'ТТГ',p:3500,v:180,d:0,slot:'fast',lab:1},
+  ferritin:{n:'Ферритин',p:4000,v:180,d:0,slot:'fast',lab:1},
+  vitd:{n:'Витамин D (25-OH)',p:9000,v:180,d:0,slot:'fast',lab:1},
+  abo:{n:'Группа крови и резус',p:3000,v:3650,d:0,slot:'fast',lab:1},
+  infect:{n:'ВИЧ, сифилис, гепатиты B и C',p:9500,v:180,d:0,slot:'fast',lab:1},
+  torch:{n:'TORCH-инфекции',p:14000,v:365,d:0,slot:'fast',lab:1},
+  psa:{n:'ПСА',p:5000,v:365,d:0,slot:'fast',lab:1},
+  fit:{n:'Скрытая кровь в кале',p:3000,v:365,d:0,slot:'fast',lab:1,note:'Контейнер выдадим заранее.'},
+  sperm:{n:'Спермограмма',p:9000,v:90,d:0,slot:'fast',lab:1,note:'Воздержание 2–7 дней.'},
+  ecg:{n:'ЭКГ',p:4000,v:365,d:10,slot:'mid'},
+  us_abd:{n:'УЗИ органов брюшной полости',p:9000,v:365,d:20,slot:'fast',note:'Натощак, 8 часов без еды.'},
+  us_pelvis:{n:'УЗИ органов малого таза',p:9000,v:365,d:20,slot:'mid'},
+  us_thyroid:{n:'УЗИ щитовидной железы',p:7000,v:365,d:15,slot:'mid'},
+  us_vessels:{n:'УЗИ сосудов шеи',p:12000,v:730,d:25,slot:'mid'},
+  mammo:{n:'Маммография',p:12000,v:730,d:20,slot:'mid',note:'До менопаузы лучше на 5–12 день цикла.'},
+  fluoro:{n:'Флюорография',p:5000,v:365,d:10,slot:'mid'},
+  cyto:{n:'Цитология шейки матки',p:6000,v:1095,d:15,slot:'mid',note:'Не в дни менструации.'},
+  c_ther:{n:'Консультация терапевта',p:6000,v:365,d:30,slot:'end'},
+  c_gyn:{n:'Консультация гинеколога',p:7000,v:365,d:30,slot:'end'},
+  c_andro:{n:'Консультация андролога',p:7000,v:365,d:30,slot:'end'},
+  c_gen:{n:'Консультация генетика',p:10000,v:3650,d:40,slot:'end'}
+};
+const GOALS = {
+  self:{t:'Проверить здоровье',d:'Общий скрининг по возрасту и полу'},
+  preg_f:{t:'Планируем беременность: женщина',d:'Анализы и обследования до зачатия',sex:'f'},
+  preg_m:{t:'Планируем беременность: мужчина',d:'Репродуктивное здоровье партнёра',sex:'m'},
+  cert075:{t:'Справка 075/у',d:'Для учёбы или работы'},
+  parents:{t:'Чекап для родителей',d:'Подберём по возрасту и рискам'}
+};
+const TIERNAME = {req:'обязательно', rec:'рекомендуем', opt:'по желанию'};
+
+function base(g, sex, age){
+  const L = [], a = (id, t, w) => L.push([id, t, w]);
+  const F = sex === 'f', M = sex === 'm';
+  if (g === 'self' || g === 'parents'){
+    const w = 'Базовый скрининг';
+    a('cbc','req',w); a('urine','req',w); a('glu','req',w); a('lipid','req',w);
+    a('liver','rec',w); a('kidney','rec',w);
+    a('ecg', age >= 35 ? 'req' : 'rec', age >= 35 ? 'Возраст 35+' : w);
+    if (F || age >= 40) a('tsh','rec', F ? 'Щитовидная железа' : 'Возраст 40+');
+    if (age >= 30) a('us_abd','rec','Возраст 30+');
+    if (age >= 40) a('hba1c','rec','Возраст 40+: риск диабета');
+    if (age >= 45) a('us_vessels','rec','Возраст 45+');
+    if (F && age >= 40) a('mammo','req','Скрининг молочных желез');
+    if (F && age >= 25) a('cyto','rec','Скрининг шейки матки');
+    if (F) a('c_gyn','rec','Осмотр гинеколога');
+    if (M && age >= 45) a('psa','rec','Скрининг простаты');
+    if (age >= 50) a('fit','req','Скрининг кишечника');
+    a('vitd','opt','Уровень витамина D');
+    a('c_ther','req','Разбор результатов с врачом');
+  } else if (g === 'preg_f'){
+    const w = 'Подготовка к беременности';
+    ['cbc','ferritin','glu','tsh','abo','infect','torch','cyto','us_pelvis','c_gyn'].forEach(id => a(id,'req',w));
+    a('urine','rec',w); a('vitd','rec',w); a('hba1c','opt',w);
+  } else if (g === 'preg_m'){
+    const w = 'Подготовка к беременности партнёрши';
+    ['sperm','c_andro','abo','infect'].forEach(id => a(id,'req',w));
+    a('cbc','rec',w); a('glu','rec',w); a('urine','opt',w);
+  } else if (g === 'cert075'){
+    const w = 'Справка 075/у (состав уточните по требованиям организации)';
+    ['c_ther','fluoro','cbc','urine'].forEach(id => a(id,'req',w));
+    a('ecg','rec',w); a('infect','opt',w);
+  }
+  return L;
+}
+
+/* analytes for PDF parsing */
+const W = s => new RegExp('(?:^|[^а-яёa-z])(?:' + s + ')(?![а-яёa-z])', 'i');
+const chol = v => v > 20 ? v / 38.67 : v;
+const AN = [
+  {id:'hba1c',re:/гликир\S*\s+гемоглобин|hba1c|hb\s*a1c|гликозилир/i,test:'hba1c',n:'HbA1c',u:'%',ref:[4,5.7]},
+  {id:'hgb',re:/гемоглобин|hemoglobin|(?:^|[^a-z])hgb(?![a-z])/i,test:'cbc',n:'Гемоглобин',u:'г/л',ref:{f:[120,150],m:[130,170]},fix:v => v < 30 ? v * 10 : v},
+  {id:'ferritin',re:/ферритин|ferritin/i,test:'ferritin',n:'Ферритин',u:'нг/мл',ref:{f:[15,150],m:[30,400]}},
+  {id:'tsh',re:W('ттг|тиреотропн\\S*|tsh'),test:'tsh',n:'ТТГ',u:'мМЕ/л',ref:[0.4,4]},
+  {id:'glu',re:/глюкоз|glucose/i,test:'glu',n:'Глюкоза',u:'ммоль/л',ref:[3.9,5.5],fix:v => v > 30 ? v / 18 : v},
+  {id:'ldl',re:W('лпнп|ldl'),test:'lipid',n:'ЛПНП',u:'ммоль/л',ref:[0,3],fix:chol},
+  {id:'hdl',re:W('лпвп|hdl'),test:'lipid',n:'ЛПВП',u:'ммоль/л',ref:{f:[1.2,9],m:[1,9]},fix:chol},
+  {id:'tg',re:/триглицерид|triglycer/i,test:'lipid',n:'Триглицериды',u:'ммоль/л',ref:[0,1.7],fix:v => v > 10 ? v / 88.5 : v},
+  {id:'chol',re:/холестерин|cholesterol/i,test:'lipid',n:'Холестерин общий',u:'ммоль/л',ref:[0,5.2],fix:chol},
+  {id:'alt',re:W('алат|алт|alt|аланинаминотрансфераз\\S*'),test:'liver',n:'АЛТ',u:'Ед/л',ref:{f:[0,35],m:[0,45]}},
+  {id:'ast',re:W('асат|аст|ast|аспартатаминотрансфераз\\S*'),test:'liver',n:'АСТ',u:'Ед/л',ref:{f:[0,35],m:[0,40]}},
+  {id:'crea',re:/креатинин|creatinine/i,test:'kidney',n:'Креатинин',u:'мкмоль/л',ref:{f:[53,97],m:[62,106]},fix:v => v < 15 ? v * 88.4 : v},
+  {id:'vitd',re:/витамин\s*d|25[\s-]*\(?oh\)?|кальцидиол/i,test:'vitd',n:'Витамин D',u:'нг/мл',ref:[30,100],fix:(v, u) => /нмоль|nmol/i.test(u) ? v / 2.496 : v}
+];
+const refOf = a => Array.isArray(a.ref) ? a.ref : a.ref[S.sex === 'm' ? 'm' : 'f'];
+function mkItem(a, v, u){
+  if (a.fix) v = a.fix(v, u || '');
+  v = Math.round(v * 100) / 100;
+  const ref = refOf(a);
+  return {id:a.id, n:a.n, val:v, unit:a.u, ref, flag: v < ref[0] ? 'low' : v > ref[1] ? 'high' : 'ok', test:a.test};
+}
+function parseLab(text){
+  const now = Date.now(), all = [];
+  const re = /(\d{2})[.\/](\d{2})[.\/](\d{4})/g; let m;
+  while ((m = re.exec(text))){
+    const d = new Date(+m[3], +m[2] - 1, +m[1]);
+    if (!isNaN(d) && d.getTime() <= now && d.getFullYear() >= 2015) all.push({d, i:m.index});
+  }
+  let date = null;
+  const ctx = text.match(/(?:дата|забор|взят|сдач|исследован|collected|date)[^\d]{0,30}(\d{2})[.\/](\d{2})[.\/](\d{4})/i);
+  if (ctx){ const d = new Date(+ctx[3], +ctx[2] - 1, +ctx[1]); if (!isNaN(d) && d.getTime() <= now) date = d; }
+  if (!date && all.length) date = new Date(Math.max(...all.map(x => x.d.getTime())));
+  const items = [], seen = new Set();
+  for (const line of text.split(/\r?\n/)){
+    for (const a of AN){
+      const mm = line.match(a.re); if (!mm) continue;
+      let rest = line.slice(mm.index + mm[0].length).replace(/\([^)]*[a-zа-яё][^)]*\)/gi, ' ');
+      const nm = rest.match(/(\d+(?:[.,]\d+)?)/);
+      if (nm && !seen.has(a.id)){
+        const unit = (rest.slice(nm.index + nm[0].length).match(/^\s*([^\s\d(]{1,14})/) || [])[1] || '';
+        items.push(mkItem(a, parseFloat(nm[1].replace(',', '.')), unit)); seen.add(a.id);
+      }
+      break;
+    }
+  }
+  return {date, items};
+}
+function ingest(parsed){
+  parsed.items.forEach(it => {
+    const r = S.results[it.test] || (S.results[it.test] = {date:parsed.date, items:[]});
+    if (!r.items.find(x => x.id === it.id)) r.items.push(it);
+    if (parsed.date && !r.date) r.date = parsed.date;
+  });
+}
+
+const TOPICS = {
+  heart:{n:'сердце и давление',re:/сердц|давлен|пульс|аритм|одышк/i,t:['ecg','lipid']},
+  head:{n:'головные боли',re:/голов|мигрен|головокруж|шум в уш/i,t:['c_ther','cbc','tsh']},
+  thyroid:{n:'щитовидная железа',re:/щитовид|зоб/i,t:['tsh','us_thyroid']},
+  cycle:{n:'менструальный цикл',re:/цикл|менструац|месячн/i,t:['tsh','us_pelvis','c_gyn']},
+  joints:{n:'суставы и кости',re:/сустав|колен|спин|кост/i,t:['vitd','c_ther']},
+  stomach:{n:'желудок и кишечник',re:/желуд|живот|изжог|тошнот|кишеч|вздути/i,t:['us_abd','liver']},
+  fatigue:{n:'усталость',re:/устал|слабост|сонлив|вялост/i,t:['cbc','ferritin','tsh']},
+  hair:{n:'волосы и кожа',re:/волос|выпад|кож[аеи]/i,t:['ferritin','tsh','vitd']},
+  lungs:{n:'лёгкие',re:/кашел|лёгк|легк|бронх/i,t:['fluoro']},
+  urinary:{n:'мочеиспускание',re:/мочеиспуск|почк|цистит|моча/i,t:['urine','kidney']}
+};
+const RED = /боль в груди|давящ\S* боль|одышк\S* в покое|потер\S* сознан|обморок|кровь в (?:стул|кал|моч|мокрот)|кровохарк|внезапн\S* (?:слабост|онемени|потер)|судорог|сильн\S* кровотечен/i;
+
+const Q = [
+  {id:'labs_date',t:'Когда сдавали загруженные анализы? В файле нет даты.',o:[['15','Меньше месяца назад'],['60','1–3 месяца назад'],['135','3–6 месяцев назад'],['300','Больше 6 месяцев назад']],aff:'сроки действия всех загруженных показателей',show:() => Object.values(S.results).some(r => !r.date)},
+  {id:'smoke',t:'Вы курите?',o:[['yes','Да'],['no','Нет'],['ex','Бросил(а)']],aff:['lipid','ecg','us_vessels','fluoro'],show:() => ['self','parents'].includes(S.goal)},
+  {id:'fam_cardio',t:'Был ли у родителей, братьев или сестёр инфаркт или инсульт до 60 лет?',o:[['yes','Да'],['no','Нет'],['unk','Не знаю']],aff:['lipid','ecg','us_vessels','hba1c'],show:() => ['self','parents'].includes(S.goal) && S.age >= 30},
+  {id:'fam_cancer',t:'Был ли у близких родственников рак молочной железы, простаты или кишечника?',o:[['yes','Да'],['no','Нет'],['unk','Не знаю']],aff:['mammo','psa','fit'],show:() => ['self','parents'].includes(S.goal) && S.age >= 35},
+  {id:'cycle',t:'Менструальный цикл регулярный?',o:[['yes','Да'],['no','Нет'],['unk','Не уверена']],aff:['tsh','us_pelvis','us_thyroid'],show:() => S.sex === 'f' && S.age < 50 && ['self','preg_f','parents'].includes(S.goal)},
+  {id:'thyroid_fam',t:'Были ли у близких родственников болезни щитовидной железы?',o:[['yes','Да'],['no','Нет'],['unk','Не знаю']],aff:['tsh','us_thyroid'],show:() => S.sex === 'f' && ['preg_f','self'].includes(S.goal)},
+  {id:'loss',t:'Были ли выкидыши или замершая беременность?',o:[['yes','Да'],['no','Нет']],aff:['c_gen','torch','us_pelvis'],show:() => S.goal === 'preg_f'}
+];
+
+/* ============ state ============ */
+const S = {view:'patient', step:0, done:false, goal:null, sex:null, age:null, results:{}, labsDate:null, ans:{}, complaint:'', topics:[], redFlag:false, aiSummary:'', tier:'rec', sel:new Set(), chat:[], lead:{name:'', phone:'', date:'', consent:false}, events:[], demo:false, msg:'', pasteOpen:false, paste:''};
+let SAMPLE = null;
+if (window.claude && window.claude.use){
+  window.claude.use('sample').then(s => { if (s){ SAMPLE = s; if (S.view === 'patient' && !S.done && (S.step === 2 || S.step === 3 || S.step === 4)) render(); } }).catch(() => {});
+}
+const ev = n => { if (!S.events.find(e => e.n === n)) S.events.push({n, t:Date.now()}); };
+
+/* ============ engine ============ */
+const watch = i => S.goal === 'preg_f' && i.flag === 'ok' && ((i.id === 'ferritin' && i.val < 30) || (i.id === 'tsh' && i.val > 2.5));
+function plan(){
+  const need = {}, rank = {req:3, rec:2, opt:1};
+  const add = (id, tier, why) => { const x = need[id] || (need[id] = {id, tier, why:[]}); if (rank[tier] > rank[x.tier]) x.tier = tier; if (!x.why.includes(why)) x.why.push(why); };
+  const A = S.ans, F = S.sex === 'f', M = S.sex === 'm', age = S.age || 30, g = S.goal;
+  base(g, S.sex, age).forEach(([id, t, w]) => add(id, t, w));
+  if (A.smoke === 'yes'){ add('lipid','req','Курение'); add('ecg','req','Курение'); add('us_vessels','rec','Курение'); add('fluoro','rec','Курение: лёгкие'); }
+  if (A.fam_cardio === 'yes'){ const w = 'Ранний инфаркт или инсульт у родственников'; add('lipid','req',w); add('ecg','req',w); add('us_vessels','rec',w); add('hba1c','rec',w); }
+  if (A.fam_cancer === 'yes'){ const w = 'Онкология у близких родственников'; if (F && age >= 35) add('mammo','rec',w); if (M && age >= 40) add('psa','rec',w); if (age >= 40) add('fit','rec',w); }
+  if (A.cycle === 'no' && F){ const w = 'Нерегулярный цикл'; add('tsh','req',w); add('us_pelvis','rec',w); add('us_thyroid','rec',w); add('c_gyn','rec',w); }
+  if (A.thyroid_fam === 'yes' && F){ const w = 'Болезни щитовидной железы у родственников'; add('tsh','req',w); add('us_thyroid','rec',w); }
+  if (A.loss === 'yes' && g === 'preg_f'){ const w = 'Потери беременности в анамнезе'; add('c_gen','rec',w); add('torch','req',w); add('us_pelvis','req',w); }
+  if (S.redFlag) add('c_ther','req','Симптомы, которые лучше показать врачу');
+  S.topics.forEach(k => { const T = TOPICS[k]; if (T) T.t.forEach(id => add(id, 'rec', 'Вы описали: ' + T.n)); });
+
+  const fnd = [];
+  const get = id => { for (const r of Object.values(S.results)){ const x = r.items.find(i => i.id === id); if (x) return x; } return null; };
+  const say = x => `${x.n} ${x.val} ${x.unit}: ${x.flag === 'low' ? 'ниже' : 'выше'} референса (${x.ref[0]}–${x.ref[1]})`;
+  let x;
+  if ((x = get('hgb')) && x.flag === 'low'){ fnd.push(say(x)); add('ferritin','req','Гемоглобин ниже референса'); add('c_ther','rec','Разбор отклонений'); }
+  if ((x = get('ferritin'))){
+    if (x.flag === 'low'){ fnd.push(say(x)); add('c_ther','rec','Разбор отклонений'); }
+    else if (g === 'preg_f' && x.val < 30){ fnd.push(`${x.n} ${x.val} ${x.unit}: в пределах референса, но ниже 30, которые часто считают целевыми при планировании беременности`); add('c_ther','rec','Разбор отклонений'); }
+  }
+  if ((x = get('glu')) && x.val >= 5.6){ fnd.push(say(x)); add('hba1c','rec','Глюкоза выше референса'); }
+  if (((x = get('ldl')) && x.flag === 'high') || ((x = get('chol')) && x.flag === 'high')){ fnd.push(say(x)); add('ecg','req','Липиды выше референса'); add('us_vessels','rec','Липиды выше референса'); add('c_ther','rec','Разбор отклонений'); }
+  if ((x = get('tsh'))){
+    if (x.flag !== 'ok'){ fnd.push(say(x)); add('us_thyroid','rec','ТТГ вне референса'); add('c_ther','rec','Разбор отклонений'); }
+    else if (g === 'preg_f' && x.val > 2.5){ fnd.push(`${x.n} ${x.val} ${x.unit}: в пределах референса, но выше 2,5, которые часто считают целевыми при планировании беременности`); add('c_ther','rec','Разбор отклонений'); }
+  }
+  if (((x = get('alt')) && x.flag === 'high') || ((x = get('ast')) && x.flag === 'high')){ fnd.push(say(x)); add('us_abd','rec','Печёночные пробы выше референса'); }
+  if ((x = get('crea')) && x.flag === 'high'){ fnd.push(say(x)); add('urine','req','Креатинин выше референса'); }
+  if ((x = get('vitd')) && x.flag === 'low') fnd.push(say(x));
+
+  const items = Object.values(need).map(n => {
+    const T = TESTS[n.id], r = S.results[n.id];
+    n.T = T; n.status = 'todo'; n.note = '';
+    if (r){
+      const d = r.date || S.labsDate;
+      if (!d){ n.status = 'undated'; n.note = 'Дата анализа неизвестна'; }
+      else {
+        const abn = r.items.some(i => i.flag !== 'ok' || watch(i)), lim = abn ? Math.min(T.v, 90) : T.v, a = diff(d);
+        if (a <= lim){ n.status = 'have'; n.date = d; n.until = addDays(d, lim); }
+        else { n.status = 'stale'; n.date = d; n.note = abn && a <= T.v ? `Отклонение от ${fmt(d)}: пора проконтролировать` : `Сдавали ${fmt(d)}, срок действия истёк`; }
+      }
+    }
+    return n;
+  });
+  const std = {}; base(g, S.sex, age).forEach(([id, t]) => { if (t !== 'opt') std[id] = true; });
+  const order = {req:0, rec:1, opt:2};
+  items.sort((a, b) => order[a.tier] - order[b.tier] || TESTS[a.id].n.localeCompare(TESTS[b.id].n));
+  return {items, todo:items.filter(i => i.status !== 'have'), have:items.filter(i => i.status === 'have'), std, fnd, dedupe:items.reduce((s, i) => s + i.why.length - 1, 0)};
+}
+const TIERS = {min:['req'], rec:['req','rec'], max:['req','rec','opt']};
+function applyTier(){
+  const P = plan();
+  if (TIERS[S.tier]) S.sel = new Set(P.todo.filter(x => TIERS[S.tier].includes(x.tier)).map(x => x.id));
+  else S.sel = new Set([...S.sel].filter(id => P.todo.find(x => x.id === id)));
+  return P;
+}
+const tierPrice = (P, t) => P.todo.filter(x => TIERS[t].includes(x.tier)).reduce((s, x) => s + TESTS[x.id].p, 0);
+const selPrice = () => [...S.sel].reduce((s, id) => s + TESTS[id].p, 0);
+function pricing(P){
+  const ids = Object.keys(P.std);
+  const X = ids.reduce((s, id) => s + TESTS[id].p, 0);
+  const a = P.have.filter(x => P.std[x.id]).reduce((s, x) => s + TESTS[x.id].p, 0);
+  const r = P.todo.filter(x => P.std[x.id] && !S.sel.has(x.id)).reduce((s, x) => s + TESTS[x.id].p, 0);
+  const b = [...S.sel].filter(id => !P.std[id]).reduce((s, id) => s + TESTS[id].p, 0);
+  return {X, a, r, b, Y:selPrice()};
+}
+function startH(d){ if (!d) return 8; return new Date(d + 'T12:00').getDay() === 6 ? 9 : 8; }
+function route(sel, sh){
+  const ids = [...sel].map(id => ({id, ...TESTS[id]}));
+  const steps = []; let t = sh * 60;
+  const push = (h, s, dur) => { steps.push({t:hhmm(t), h, s}); t += dur; };
+  const labs = ids.filter(x => x.lab), fast = ids.filter(x => x.slot === 'fast');
+  if (labs.length){
+    const notes = labs.filter(x => x.note).map(x => x.n + ': ' + x.note).join(' ');
+    push('Лаборатория: сдача анализов', 'Приходите натощак: 8–12 часов без еды, воду пить можно. ' + notes, 15);
+  }
+  ids.filter(x => x.slot === 'fast' && !x.lab).forEach(x => push(x.n, x.note || '', x.d));
+  if (fast.length) push('Завтрак', 'Кафе рядом или свой перекус.', 30);
+  ids.filter(x => x.slot === 'mid').forEach(x => push(x.n, x.note || '', x.d));
+  ids.filter(x => x.slot === 'end').sort((a, b) => (a.id === 'c_ther') - (b.id === 'c_ther')).forEach(x => push(x.n, x.id === 'c_ther' ? 'Врач разберёт результаты и ответит на вопросы.' : (x.note || ''), x.d));
+  steps.push({t:hhmm(t), h:'Готово', s:''});
+  return {steps, mins:t - sh * 60, end:t};
+}
+function reminders(){
+  const R = [], booked = S.done && S.lead.date ? new Date(S.lead.date + 'T12:00') : null;
+  Object.entries(S.results).forEach(([id, r]) => {
+    if (booked && S.sel.has(id)) return;
+    const d = r.date || S.labsDate; if (!d || !TESTS[id]) return;
+    const abn = r.items.some(i => i.flag !== 'ok' || watch(i));
+    R.push({due:addDays(d, abn ? Math.min(TESTS[id].v, 90) : TESTS[id].v), txt:(abn ? 'Контроль: ' : 'Повтор: ') + TESTS[id].n});
+  });
+  if (booked) [...S.sel].forEach(id => R.push({due:addDays(booked, TESTS[id].v), txt:'Повтор: ' + TESTS[id].n}));
+  R.push({due:addDays(booked || new Date(), 365), txt:'Ежегодный чекап'});
+  return R.sort((a, b) => a.due - b.due);
+}
+
+/* ============ AI (Claude via sample capability) ============ */
+async function aiTopics(text){
+  const prompt = `Ты классифицируешь жалобы пациента для подбора чекапа. Не ставь диагнозов. Верни только JSON вида {"topics":[...],"red_flag":true|false,"summary":"..."}.
+topics: только значения из списка ${Object.keys(TOPICS).join(', ')}.
+red_flag=true, если описаны симптомы, требующие срочного осмотра врача: боль в груди, одышка в покое, потеря сознания, кровь в стуле, моче или мокроте, внезапная слабость или онемение, сильное кровотечение.
+summary: одна короткая фраза по-русски без диагноза.
+Текст пациента: """${text.slice(0, 1200)}"""`;
+  const r = await SAMPLE.json(prompt, {cache:false});
+  return {topics:(r.topics || []).filter(k => TOPICS[k]), red:!!r.red_flag, summary:String(r.summary || '').slice(0, 200)};
+}
+async function aiExtract(text){
+  const prompt = `Извлеки показатели из текста лабораторного отчёта. Верни только JSON: {"date":"dd.mm.yyyy" или null,"items":[{"id":"...","value":число,"unit":"..."}]}.
+id только из списка: ${AN.map(a => a.id).join(', ')}. Пропускай неуверенные значения. Не выдумывай числа.
+Текст: """${text.slice(0, 6000)}"""`;
+  const r = await SAMPLE.json(prompt, {cache:false});
+  let date = null;
+  const m = String(r.date || '').match(/(\d{2})\.(\d{2})\.(\d{4})/);
+  if (m){ const d = new Date(+m[3], +m[2] - 1, +m[1]); if (!isNaN(d) && d.getTime() <= Date.now()) date = d; }
+  const items = [];
+  (r.items || []).forEach(i => { const a = AN.find(x => x.id === i.id); const v = Number(i.value); if (a && isFinite(v)) items.push(mkItem(a, v, i.unit)); });
+  return {date, items};
+}
+function analyzeComplaint(text){
+  const t = text || '';
+  S.redFlag = RED.test(t);
+  S.topics = Object.keys(TOPICS).filter(k => TOPICS[k].re.test(t));
+}
+
+/* ============ PDF ============ */
+async function readPdf(file){
+  if (!window.pdfjsLib) throw new Error('pdfjs');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf = await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+  const out = [];
+  for (let i = 1; i <= pdf.numPages; i++){
+    const tc = await (await pdf.getPage(i)).getTextContent();
+    const its = tc.items.filter(x => x.str && x.str.trim()).map(x => ({x:x.transform[4], y:x.transform[5], s:x.str})).sort((a, b) => b.y - a.y || a.x - b.x);
+    let line = [], ly = null;
+    its.forEach(it => {
+      if (ly !== null && Math.abs(ly - it.y) > 3){ out.push(line.sort((a, b) => a.x - b.x).map(z => z.s).join(' ')); line = []; }
+      line.push(it); ly = it.y;
+    });
+    if (line.length) out.push(line.sort((a, b) => a.x - b.x).map(z => z.s).join(' '));
+  }
+  return out.join('\n');
+}
+async function handleFile(file){
+  S.msg = ''; S.pdfName = file.name;
+  try {
+    const text = await readPdf(file);
+    if (!text.trim()){ S.msg = 'В файле нет текстового слоя: похоже, это скан. Вставьте показатели текстом ниже.'; S.pasteOpen = true; render(); return; }
+    S.paste = text; fromText(text);
+  } catch (e){
+    S.msg = 'Не удалось прочитать PDF. Вставьте текст результатов ниже или выберите пример.'; S.pasteOpen = true; render();
+  }
+}
+function fromText(text){
+  S.results = {}; S.labsDate = null;
+  const p = parseLab(text);
+  if (!p.items.length){ S.msg = 'Показатели не найдены. Проверьте текст или попробуйте разбор с ИИ.'; S.pasteOpen = true; render(); return; }
+  ingest(p); S.msg = ''; ev('Загружены результаты'); render();
+}
+function demoText(){
+  return `PRIME green clinic. Лабораторные исследования
+Дата забора: ${fmt(daysAgo(50))}
+Гемоглобин 118 г/л (120-150)
+Глюкоза 5.7 ммоль/л (3.9-5.5)
+Холестерин общий 5.6 ммоль/л
+ЛПНП 3.4 ммоль/л
+Ферритин 22 нг/мл
+ТТГ 2.8 мМЕ/л
+Витамин D 18 нг/мл
+АЛТ 21 Ед/л
+Креатинин 72 мкмоль/л`;
+}
+function loadDemoClient(){
+  Object.assign(S, {goal:'preg_f', sex:'f', age:31, demo:true, step:3, results:{}, ans:{}, labsDate:null, topics:[], complaint:'', redFlag:false, done:false, tier:'rec'});
+  const L = (id, v, u) => mkItem(AN.find(a => a.id === id), v, u);
+  S.results = {
+    cbc:{date:daysAgo(45), items:[L('hgb',128)]},
+    tsh:{date:daysAgo(45), items:[L('tsh',2.9)]},
+    glu:{date:daysAgo(45), items:[L('glu',4.9)]},
+    ferritin:{date:daysAgo(170), items:[L('ferritin',22)]},
+    vitd:{date:daysAgo(170), items:[L('vitd',18)]},
+    infect:{date:daysAgo(400), items:[], note:'Отрицательно'},
+    abo:{date:daysAgo(700), items:[], note:'II(A) Rh+'},
+    cyto:{date:daysAgo(320), items:[], note:'Без патологии'},
+    us_pelvis:{date:daysAgo(320), items:[], note:'Без патологии'}
+  };
+  ev('Цель выбрана'); ev('Профиль заполнен'); ev('Загружены результаты');
+}
+
+/* ============ views ============ */
+const chips = (id, opts) => `<div class="chips">${opts.map(([v, l]) => `<button class="chip" data-a="ans" data-id="${id}" data-v="${v}" aria-pressed="${S.ans[id] === v}">${esc(l)}</button>`).join('')}</div>`;
+const flag = f => `<span class="fl ${f}">${f === 'ok' ? 'в норме' : f === 'low' ? 'ниже нормы' : 'выше нормы'}</span>`;
+
+function viewStart(){
+  return `<h1>Чекап, собранный под вас</h1>
+  <p class="lead">Скажите, зачем он нужен. Мы соберём список обследований без повторов и покажем, за что вы платите.</p>
+  <div class="rows">${Object.entries(GOALS).map(([k, g]) => `<button class="row" data-a="goal" data-v="${k}"><div><b>${esc(g.t)}</b><span>${esc(g.d)}</span></div><i>›</i></button>`).join('')}</div>
+  <p style="margin-top:24px"><button class="link" data-a="demo">Посмотреть на примере клиента PRIME с историей обследований</button></p>`;
+}
+function viewProfile(){
+  const g = GOALS[S.goal], needSex = !g.sex, okAge = S.age >= 18 && S.age <= 100;
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>${S.goal === 'parents' ? 'О вашем родственнике' : 'Немного о вас'}</h2>
+  <p class="muted">Возраст и пол определяют, какие обследования нужны в первую очередь.</p>
+  ${needSex ? `<label class="f">Пол</label><div class="chips">${[['f','Женский'],['m','Мужской']].map(([v, l]) => `<button class="chip" data-a="sex" data-v="${v}" aria-pressed="${S.sex === v}">${l}</button>`).join('')}</div>` : ''}
+  <label class="f" for="age">Возраст, полных лет</label>
+  <input id="age" type="number" inputmode="numeric" min="18" max="100" value="${S.age ?? ''}" style="max-width:160px">
+  <p class="small muted" id="agehint">${S.age && S.age < 18 ? 'Детские программы подбираются отдельно. Для взрослых укажите возраст от 18.' : ''}</p>
+  <p><button class="btn" id="nextProfile" data-a="next" ${S.sex && okAge ? '' : 'disabled'}>Дальше</button></p>`;
+}
+function resultTable(){
+  const rows = [];
+  Object.entries(S.results).forEach(([id, r]) => {
+    const d = r.date ? fmt(r.date) : 'дата не указана';
+    if (r.items.length) r.items.forEach(i => rows.push(`<tr><td>${esc(i.n)}</td><td>${i.val} ${esc(i.unit)}</td><td>${i.ref[0]}–${i.ref[1]}</td><td>${watch(i) ? '<span class="fl low">вне цели</span>' : flag(i.flag)}</td><td>${d}</td></tr>`));
+    else rows.push(`<tr><td>${esc(TESTS[id].n)}</td><td colspan="2">${esc(r.note || 'выполнено')}</td><td></td><td>${d}</td></tr>`);
+  });
+  return `<div class="tbl"><table><thead><tr><th>Показатель</th><th>Результат</th><th>Норма</th><th>Статус</th><th>Дата</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+function viewResults(){
+  const has = Object.keys(S.results).length > 0;
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>Результаты анализов</h2>
+  <p class="muted">Загрузите PDF из клиники, eGov или DamuMed. Мы найдём показатели и не будем назначать заново то, что уже есть.</p>
+  ${has ? `${resultTable()}<p class="small muted">Файл читается в вашем браузере. Проверьте, что значения распознаны верно.</p>
+    <p><button class="btn" data-a="next">Дальше</button> <button class="btn ghost" data-a="clearres">Загрузить другой</button></p>` : `
+  <label class="drop" id="drop"><input type="file" id="file" accept="application/pdf,.pdf"><b>Выберите PDF</b><br><span class="muted">или перетащите файл сюда</span></label>
+  ${S.msg ? `<div class="note">${esc(S.msg)}</div>` : ''}
+  <p class="small">${S.pasteOpen ? '' : '<button class="link" data-a="pasteopen">Вставить текст результатов</button> · '}<button class="link" data-a="sample">Использовать пример результатов</button> · <button class="link" data-a="skipres">У меня нет результатов</button></p>
+  ${S.pasteOpen ? `<label class="f" for="paste">Текст результатов</label><textarea id="paste" placeholder="Гемоглобин 128 г/л&#10;ТТГ 2,1 мМЕ/л">${esc(S.paste)}</textarea>
+    <p style="margin-top:10px"><button class="btn" data-a="parse">Разобрать текст</button> ${SAMPLE ? '<button class="btn ghost" data-a="aiparse">Разобрать с ИИ</button>' : ''}</p>
+    ${SAMPLE ? '<p class="small muted">Разбор с ИИ отправляет этот текст в Claude.</p>' : ''}` : ''}`}`;
+}
+function viewQuestions(){
+  const qs = Q.filter(q => q.show());
+  const affTxt = q => Array.isArray(q.aff) ? q.aff.map(id => TESTS[id].n).join(', ') : q.aff;
+  const topicNames = S.topics.map(k => TOPICS[k].n);
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>Уточним несколько вещей</h2>
+  <p class="muted">Только то, что меняет состав чекапа. Ответ «не знаю» тоже подходит.</p>
+  ${qs.map(q => `<div class="q"><b>${esc(q.t)}</b>${chips(q.id, q.o)}<div class="aff">Влияет на: ${esc(affTxt(q))}</div></div>`).join('')}
+  <div class="q"><b>Что беспокоит? Необязательно</b>
+    <textarea id="complaint" placeholder="Например: часто устаю, болит голова, выпадают волосы">${esc(S.complaint)}</textarea>
+    <p style="margin-top:10px"><button class="btn ghost" data-a="analyze">${SAMPLE ? 'Разобрать с ИИ' : 'Разобрать'}</button></p>
+    ${S.aiSummary ? `<p class="small">${esc(S.aiSummary)}</p>` : ''}
+    ${topicNames.length ? `<div class="aff">Учтём: ${esc(topicNames.join(', '))}</div>` : ''}
+    ${S.redFlag ? redBanner() : ''}</div>
+  <p><button class="btn" data-a="next">Собрать чекап</button></p>`;
+}
+function redBanner(){
+  return `<div class="banner"><b>Сначала к врачу.</b> Некоторые из описанных симптомов лучше показать врачу до чекапа. Запишем вас на приём терапевта, а обследование можно пройти после.<p style="margin:12px 0 0"><button class="btn" data-a="redgo">Записаться на приём</button></p></div>`;
+}
+function viewPlan(){
+  const P = applyTier(), pr = pricing(P);
+  const rowsFor = list => list.map(x => `<div class="it"><input type="checkbox" data-a="tog" data-id="${x.id}" ${S.sel.has(x.id) ? 'checked' : ''} aria-label="${esc(x.T.n)}">
+    <div><div class="nm">${esc(x.T.n)} <span class="tag">${TIERNAME[x.tier]}</span></div>
+    <div>${x.why.map(w => `<span class="pill">${esc(w)}</span>`).join('')}</div>
+    ${x.note ? `<div class="small muted" style="margin-top:6px">${esc(x.note)}</div>` : ''}
+    ${x.why.length > 1 ? `<div class="gain">Один раз вместо ${x.why.length}: причины объединены</div>` : ''}</div>
+    <div class="pr">${money(x.T.p)}</div></div>`).join('');
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>Ваш чекап</h2>
+  <p class="muted">${esc(GOALS[S.goal].t)}, ${GOALS[S.goal].sex ? '' : (S.sex === 'f' ? 'женщина' : 'мужчина') + ', '}${S.age} лет.${S.demo ? ' Клиент PRIME с 2024 года.' : ''} Уберите или добавьте позиции, цена пересчитается.</p>
+  ${S.redFlag ? redBanner() : ''}
+  <div class="tiers">${[['min','Минимум'],['rec','Рекомендуем'],['max','Максимум']].map(([k, l]) => `<button class="tier" data-a="tier" data-v="${k}" aria-pressed="${S.tier === k}"><b>${l}</b><span>${money(tierPrice(P, k))}</span></button>`).join('')}</div>
+  ${P.todo.length ? `<h3>Нужно сдать</h3>${rowsFor(P.todo)}` : '<div class="note">По вашим данным всё нужное уже сдано и действует.</div>'}
+  ${P.have.length ? `<details open><summary>Уже есть, повторять не нужно (${P.have.length})</summary>${P.have.map(x => `<div class="it"><span></span><div><div class="nm">${esc(x.T.n)}</div><div class="small muted">Сдано ${fmt(x.date)}, действует до ${fmt(x.until)}</div></div><div class="pr muted"><s>${money(x.T.p)}</s></div></div>`).join('')}</details>` : ''}
+  ${P.fnd.length ? `<h3>Что показали ваши результаты</h3>${P.fnd.map(t => `<p style="margin-bottom:6px">${esc(t)}</p>`).join('')}<p class="small muted">Это повод обсудить показатели с врачом, а не диагноз.</p>` : ''}
+  <div class="sum">
+    <div><span>Стандартный пакет</span><span>${money(pr.X)}</span></div>
+    ${pr.a ? `<div class="muted"><span>Уже сдано</span><span>−${money(pr.a)}</span></div>` : ''}
+    ${pr.r ? `<div class="muted"><span>Не выбрано вами</span><span>−${money(pr.r)}</span></div>` : ''}
+    ${pr.b ? `<div class="muted"><span>Добавлено по вашим данным</span><span>+${money(pr.b)}</span></div>` : ''}
+    <div class="tot"><span>Ваш чекап</span><span>${money(pr.Y)}</span></div>
+  </div>
+  <div class="ai"><h3>Спросите о своём плане</h3>
+  ${SAMPLE ? `<div class="chips">${['Почему мне это нужно?', 'Что можно убрать, чтобы сэкономить?', 'Как подготовиться к дню чекапа?'].map(q => `<button class="chip" data-a="ask" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>
+    <div id="chat">${S.chat.map(m => `<div class="msg ${m.r}">${esc(m.c)}</div>`).join('')}</div>
+    <div class="askrow"><input id="q" type="text" maxlength="300" placeholder="Ваш вопрос"><button class="btn" data-a="ask">Спросить</button></div>` : '<p class="muted small">ИИ-помощник подключится, когда страница откроется в Claude.</p>'}
+  </div>
+  <div class="bar"><div><div class="p">${money(pr.Y)}</div><div class="small muted">${S.sel.size} позиций</div></div><button class="btn" data-a="next" ${S.sel.size ? '' : 'disabled'}>Выбрать дату</button></div>`;
+}
+function viewBook(){
+  const R = route(S.sel, startH(S.lead.date));
+  const sat = S.lead.date && new Date(S.lead.date + 'T12:00').getDay() === 6;
+  const tooLate = sat && R.end > 17 * 60;
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>День чекапа</h2>
+  <p class="muted">Всё в один визит. Примерно ${Math.floor(R.mins / 60)} ч ${R.mins % 60} мин.</p>
+  <div class="rt">${R.steps.map(s => `<div class="t">${s.t}</div><div class="d">${esc(s.h)}${s.s ? `<span>${esc(s.s)}</span>` : ''}</div>`).join('')}</div>
+  <label class="f" for="date">Дата</label>
+  <input id="date" type="date" value="${esc(S.lead.date)}" min="${new Date(Date.now() + DAY).toISOString().slice(0, 10)}" style="max-width:220px">
+  <p class="small muted" id="datehint">Пн–Пт 8:00–20:00, сб 9:00–17:00, воскресенье выходной.${tooLate ? ' В субботу такой чекап не помещается: выберите будний день.' : ''}</p>
+  <label class="f" for="name">Имя</label><input id="name" type="text" autocomplete="name" value="${esc(S.lead.name)}">
+  <label class="f" for="phone">Телефон</label><input id="phone" type="tel" autocomplete="tel" placeholder="+7 ___ ___ __ __" value="${esc(S.lead.phone)}">
+  <label class="f" style="display:flex;gap:10px;font-weight:400;align-items:flex-start"><input id="consent" type="checkbox" ${S.lead.consent ? 'checked' : ''} style="width:20px;height:20px;margin-top:3px;accent-color:var(--green2)"> Согласен на обработку персональных данных о здоровье для подбора и записи на чекап</label>
+  <p style="margin-top:20px"><button class="btn" id="bookBtn" data-a="book" disabled>Записаться</button></p>`;
+}
+function healthMap(){
+  const rows = resultTable();
+  const R = reminders().slice(0, 8);
+  return `<h3>Карта здоровья</h3>${Object.keys(S.results).length ? rows : '<p class="muted">Результатов пока нет. После чекапа они появятся здесь автоматически.</p>'}
+  <h3>Когда повторить</h3><div class="rows" style="margin-top:8px">${R.map(r => `<div class="row" style="cursor:default"><div><b style="font-size:16px;font-weight:500">${esc(r.txt)}</b><span>${fmt(r.due)}</span></div><span class="${r.due < Date.now() ? 'ov' : ''}">${rel(r.due)}</span></div>`).join('')}</div>`;
+}
+function viewDone(){
+  return `<h1>Вы записаны</h1>
+  <p class="lead">${esc(S.lead.name)}, ждём вас ${fmt(new Date(S.lead.date + 'T12:00'))}. Накануне пришлём маршрут и подготовку.</p>
+  ${healthMap()}
+  <p class="small muted">Это демо: сообщения не отправляются, данные никуда не сохраняются.</p>
+  <p><button class="btn ghost" data-a="reset">Начать заново</button> <button class="btn" data-a="view" data-v="clinic">Что увидит клиника</button></p>`;
+}
+function viewClinic(){
+  if (!S.goal || !S.age) return `<h1>Для клиники</h1><p class="lead">Пройдите анкету во вкладке «Пациент». Здесь появится заявка в том виде, в каком её увидит администратор.</p>`;
+  const built = S.step >= 4 || S.done;
+  const P = built ? applyTier() : plan(), pr = pricing(P);
+  const chosen = built ? P.todo.filter(x => S.sel.has(x.id)) : [];
+  const skipped = built ? P.todo.filter(x => !S.sel.has(x.id) && x.tier !== 'opt') : [];
+  const unk = Q.filter(q => q.show() && (S.ans[q.id] === undefined || S.ans[q.id] === 'unk'));
+  const up = [];
+  if (S.goal === 'preg_f') up.push(`Предложить чекап партнёру: спермограмма, консультация андролога и анализы на ${money(['sperm', 'c_andro', 'abo', 'infect'].reduce((s, id) => s + TESTS[id].p, 0))}.`);
+  if (S.goal === 'preg_m') up.push('Предложить обследование партнёрше в тот же день.');
+  if (S.goal === 'cert075') up.push('Предложить корпоративный пакет: справки сотрудникам по единому шаблону.');
+  if (skipped.length) up.push(`Не выбрано ${skipped.length} рекомендованных позиций на ${money(skipped.reduce((s, x) => s + TESTS[x.id].p, 0))}: уточнить причину.`);
+  if (P.fnd.length) up.push('Есть отклонения в результатах: предложить консультацию врача.');
+  const steps = [['Цель выбрана', 'Выбрана цель'], ['Профиль заполнен', 'Заполнен профиль'], ['Загружены результаты', 'Загружены результаты'], ['Ответы получены', 'Получены ответы'], ['План собран', 'Собран план'], ['Запись оформлена', 'Оформлена запись']];
+  const t0 = S.events[0]?.t;
+  return `<h1>Для клиники</h1><p class="lead">Так выглядит заявка. Администратор звонит, уже зная профиль, состав и цену.</p>
+  <h3>Пациент</h3>
+  <dl class="kv"><dt>Имя, телефон</dt><dd>${S.done ? esc(S.lead.name) + ', ' + esc(S.lead.phone) : 'ещё не указаны'}</dd>
+  <dt>Цель</dt><dd>${esc(GOALS[S.goal].t)}</dd>
+  <dt>Профиль</dt><dd>${S.sex === 'f' ? 'Женщина' : 'Мужчина'}, ${S.age} лет</dd>
+  <dt>Результаты</dt><dd>${Object.keys(S.results).length ? Object.keys(S.results).length + ' групп показателей' + (S.demo ? ', клиент PRIME' : ', из файла') : 'нет'}</dd>
+  <dt>Дата визита</dt><dd>${S.lead.date ? fmt(new Date(S.lead.date + 'T12:00')) : 'не выбрана'}</dd></dl>
+  ${S.redFlag ? '<div class="banner"><b>Красный флаг.</b> Пациент описал симптомы, требующие осмотра врача. Предложить приём терапевта.</div>' : ''}
+  <h3>Состав и цена</h3>
+  <dl class="kv"><dt>Позиций</dt><dd>${chosen.length ? chosen.map(x => esc(x.T.n)).join(', ') : 'пока не выбрано'}</dd>
+  <dt>Стандартный пакет</dt><dd>${money(pr.X)}</dd><dt>Чекап пациента</dt><dd>${built ? money(pr.Y) + (pr.a ? `, уже сдано на ${money(pr.a)}` : '') : 'ещё не собран'}</dd>
+  <dt>Объединено причин</dt><dd>${P.dedupe}: каждое обследование назначается один раз</dd></dl>
+  ${P.fnd.length ? `<h3>Отклонения в результатах</h3>${P.fnd.map(t => `<p style="margin-bottom:6px">${esc(t)}</p>`).join('')}` : ''}
+  ${unk.length ? `<h3>Не уточнено</h3><p>${unk.map(q => esc(q.t)).join('<br>')}</p>` : ''}
+  <h3>Что предложить при звонке</h3>${up.length ? up.map(t => `<p style="margin-bottom:6px">${esc(t)}</p>`).join('') : '<p class="muted">Пока нет предложений.</p>'}
+  <h3>Воронка</h3><div class="rows" style="margin-top:8px">${steps.map(([k, l]) => { const e = S.events.find(x => x.n === k); return `<div class="row" style="cursor:default"><div><b style="font-size:16px;font-weight:500">${l}</b></div><span>${e ? '✓ ' + Math.max(0, Math.round((e.t - t0) / 1000)) + ' с' : '—'}</span></div>`; }).join('')}</div>
+  <p class="small muted">Каждый шаг фиксируется как событие: по ним считаются конверсия, время до записи и доля выбора «Рекомендуем».</p>`;
+}
+
+/* ============ render & events ============ */
+function render(){
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.view)));
+  $('#pbar').style.width = (S.view === 'clinic' || S.done ? 100 : S.step / 5 * 100) + '%';
+  const f = S.view === 'clinic' ? viewClinic : S.done ? viewDone : [viewStart, viewProfile, viewResults, viewQuestions, viewPlan, viewBook][S.step];
+  $('#app').innerHTML = f();
+  if (S.step === 5 && !S.done && S.view === 'patient') syncBook();
+}
+function go(step){ S.step = step; render(); window.scrollTo({top:0}); }
+function syncBook(){
+  const L = S.lead, d = L.date ? new Date(L.date + 'T12:00') : null;
+  const R = route(S.sel, startH(L.date));
+  const okDate = d && d.getDay() !== 0 && d > new Date() && !(d.getDay() === 6 && R.end > 17 * 60);
+  const b = $('#bookBtn'); if (b) b.disabled = !(okDate && L.name.trim().length > 1 && L.phone.replace(/\D/g, '').length >= 10 && L.consent);
+  const h = $('#datehint'); if (h && d && d.getDay() === 0) h.textContent = 'Воскресенье выходной. Выберите другой день.';
+}
+function pushMsg(r, c){ S.chat.push({r, c}); const el = document.createElement('div'); el.className = 'msg ' + r; el.textContent = c; const box = $('#chat'); if (box) box.appendChild(el); return el; }
+async function ask(q){
+  if (!SAMPLE || !q.trim()) return;
+  const P = plan();
+  const ctx = {goal:GOALS[S.goal].t, sex:S.sex === 'f' ? 'женщина' : 'мужчина', age:S.age,
+    selected:[...S.sel].map(id => ({name:TESTS[id].n, price:TESTS[id].p, tier:TIERNAME[P.items.find(x => x.id === id)?.tier], reasons:P.items.find(x => x.id === id)?.why})),
+    alreadyDone:P.have.map(x => ({name:x.T.n, date:fmt(x.date), validUntil:fmt(x.until)})),
+    deviations:P.fnd, total:selPrice(), currency:'тенге (демо-цены)'};
+  pushMsg('u', q);
+  const el = pushMsg('a', 'Думаю…'); const idx = S.chat.length - 1;
+  const prompt = `Ты помощник сервиса подбора чекапов клиники PRIME green clinic. Отвечай по-русски, дружелюбно и коротко (до 100 слов). Опирайся только на данные плана ниже. Не ставь диагнозов и не назначай лечение. Не выдумывай цены и состав. Если вопрос требует врача, скажи об этом. Отклонения в результатах называй поводом обсудить с врачом.
+Данные плана: ${JSON.stringify(ctx)}
+Вопрос: ${q.slice(0, 300)}`;
+  try {
+    const r = await SAMPLE(prompt, {cache:false, onText:({text}) => { el.textContent = text; }});
+    el.textContent = r.text; S.chat[idx].c = r.text;
+  } catch (e){
+    const t = e && e.code === 'not_granted' ? 'Ответ ИИ недоступен: не выдано разрешение.' : e && e.code === 'rate_limited' ? 'Слишком много запросов. Попробуйте чуть позже.' : 'Не получилось получить ответ. Попробуйте ещё раз.';
+    el.textContent = t; S.chat[idx].c = t;
+  }
+}
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-a]'); if (!el) return;
+  const a = el.dataset.a, v = el.dataset.v;
+  if (a === 'view'){ S.view = v; render(); window.scrollTo({top:0}); }
+  else if (a === 'goal'){ S.goal = v; if (GOALS[v].sex) S.sex = GOALS[v].sex; ev('Цель выбрана'); go(1); }
+  else if (a === 'demo'){ loadDemoClient(); render(); window.scrollTo({top:0}); }
+  else if (a === 'sex'){ S.sex = v; render(); }
+  else if (a === 'back'){ go(Math.max(0, S.step - 1)); }
+  else if (a === 'next'){
+    if (S.step === 1) ev('Профиль заполнен');
+    if (S.step === 2 && !Object.keys(S.results).length) ev('Результаты пропущены');
+    if (S.step === 3){ if (S.complaint && !S.topics.length) analyzeComplaint(S.complaint); ev('Ответы получены'); S.tier = 'rec'; }
+    if (S.step === 4) ev('План собран');
+    go(S.step + 1);
+  }
+  else if (a === 'clearres'){ S.results = {}; S.labsDate = null; S.msg = ''; render(); }
+  else if (a === 'skipres'){ S.results = {}; ev('Результаты пропущены'); go(3); }
+  else if (a === 'sample'){ S.paste = demoText(); fromText(S.paste); }
+  else if (a === 'pasteopen'){ S.pasteOpen = true; render(); }
+  else if (a === 'parse'){ fromText(S.paste); }
+  else if (a === 'aiparse'){
+    S.msg = 'ИИ разбирает текст…'; render();
+    try { const p = await aiExtract(S.paste); if (!p.items.length){ S.msg = 'ИИ не нашёл показателей.'; render(); return; } S.results = {}; ingest(p); S.msg = ''; ev('Загружены результаты'); }
+    catch (err){ S.msg = 'Разбор с ИИ не удался. Проверьте текст и попробуйте ещё раз.'; }
+    render();
+  }
+  else if (a === 'ans'){
+    const id = el.dataset.id;
+    S.ans[id] = S.ans[id] === v ? undefined : v;
+    if (id === 'labs_date') S.labsDate = S.ans[id] ? daysAgo(+S.ans[id]) : null;
+    render();
+  }
+  else if (a === 'analyze'){
+    analyzeComplaint(S.complaint); S.aiSummary = '';
+    if (SAMPLE && S.complaint.trim()){
+      el.disabled = true; el.textContent = 'Разбираю…';
+      try { const r = await aiTopics(S.complaint); S.topics = [...new Set([...S.topics, ...r.topics])]; S.redFlag = S.redFlag || r.red; S.aiSummary = r.summary; } catch (err){}
+    }
+    render();
+  }
+  else if (a === 'redgo'){ S.sel = new Set(['c_ther']); S.tier = 'custom'; go(5); }
+  else if (a === 'tier'){ S.tier = v; render(); }
+  else if (a === 'tog'){
+    const id = el.dataset.id; if (S.sel.has(id)) S.sel.delete(id); else S.sel.add(id);
+    S.tier = 'custom'; const y = window.scrollY; render(); window.scrollTo({top:y});
+  }
+  else if (a === 'ask'){ const q = el.dataset.q || ($('#q') ? $('#q').value : ''); if ($('#q')) $('#q').value = ''; ask(q); }
+  else if (a === 'book'){ ev('Запись оформлена'); S.done = true; render(); window.scrollTo({top:0}); }
+  else if (a === 'reset'){ Object.assign(S, {view:'patient', step:0, done:false, goal:null, sex:null, age:null, results:{}, labsDate:null, ans:{}, complaint:'', topics:[], redFlag:false, aiSummary:'', tier:'rec', sel:new Set(), chat:[], lead:{name:'', phone:'', date:'', consent:false}, events:[], demo:false, msg:'', pasteOpen:false, paste:''}); render(); window.scrollTo({top:0}); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'age'){ S.age = t.value === '' ? null : Math.round(+t.value); const ok = S.age >= 18 && S.age <= 100; const b = $('#nextProfile'); if (b) b.disabled = !(S.sex && ok); const h = $('#agehint'); if (h) h.textContent = S.age && S.age < 18 ? 'Детские программы подбираются отдельно. Для взрослых укажите возраст от 18.' : ''; }
+  else if (t.id === 'complaint'){ S.complaint = t.value; }
+  else if (t.id === 'paste'){ S.paste = t.value; }
+  else if (t.id === 'name'){ S.lead.name = t.value; syncBook(); }
+  else if (t.id === 'phone'){ S.lead.phone = t.value; syncBook(); }
+  else if (t.id === 'date'){ S.lead.date = t.value; render(); const d = $('#date'); if (d) d.focus(); }
+  else if (t.id === 'consent'){ S.lead.consent = t.checked; syncBook(); }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'file' && e.target.files[0]) handleFile(e.target.files[0]);
+  if (e.target.id === 'date'){ S.lead.date = e.target.value; render(); }
+});
+document.addEventListener('keydown', e => { if (e.target.id === 'q' && e.key === 'Enter'){ const v = e.target.value; e.target.value = ''; ask(v); } });
+document.addEventListener('dragover', e => { if (e.target.closest && e.target.closest('#drop')){ e.preventDefault(); e.target.closest('#drop').classList.add('on'); } });
+document.addEventListener('dragleave', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) d.classList.remove('on'); });
+document.addEventListener('drop', e => { if (e.target.closest && e.target.closest('#drop')){ e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFile(f); } });
+render();
+</script>
+</body>
+</html>
