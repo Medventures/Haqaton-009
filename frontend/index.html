@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Check-up Intelligence — PRIME green clinic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#fdfbf7; --surface:#ffffff; --ink:#14201b; --muted:#5f6f68; --line:#e7e1d6;
+  --green:#06382c; --green2:#0a5443; --gold:#d7a55f; --peach:#fee5c3; --cream:#fff6ec;
+  --on-green:#ffffff; --ok:#0a5443; --warn:#9a5208; --bad:#a33a2a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1613; --surface:#15211c; --ink:#eaf0ec; --muted:#9fb0a8; --line:#26352e;
+    --green:#d7a55f; --green2:#e6bd80; --peach:#3a2e1c; --cream:#1a241f;
+    --on-green:#1a1408; --ok:#7fd1b4; --warn:#e8b36a; --bad:#f08a78;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1613; --surface:#15211c; --ink:#eaf0ec; --muted:#9fb0a8; --line:#26352e;
+  --green:#d7a55f; --green2:#e6bd80; --peach:#3a2e1c; --cream:#1a241f;
+  --on-green:#1a1408; --ok:#7fd1b4; --warn:#e8b36a; --bad:#f08a78;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:inherit;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+button,input,textarea{font:inherit;color:inherit;}
+button{cursor:pointer;}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;}
+.top{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;}
+.topin{display:flex;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:14px;}
+.logo{display:flex;align-items:baseline;gap:8px;}
+.lg{font-weight:700;font-size:20px;letter-spacing:.14em;color:var(--green2);}
+.lgs{font-size:13px;color:var(--gold);font-weight:500;}
+.tabs{display:flex;gap:4px;}
+.tabs button{background:none;border:0;padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:500;}
+.tabs button[aria-pressed="true"]{color:var(--ink);background:var(--cream);}
+.prog{height:2px;background:var(--line);}
+.prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s ease;}
+main{padding-top:40px;padding-bottom:40px;min-height:70vh;}
+h1{font-size:clamp(30px,6vw,44px);line-height:1.1;letter-spacing:-.02em;font-weight:600;margin:0 0 14px;}
+h2{font-size:24px;line-height:1.2;letter-spacing:-.01em;font-weight:600;margin:0 0 8px;}
+h3{font-size:17px;font-weight:600;margin:32px 0 6px;}
+p{margin:0 0 14px;}
+.lead{font-size:18px;color:var(--muted);max-width:56ch;}
+.muted{color:var(--muted);}
+.small{font-size:14px;}
+.back{background:none;border:0;padding:0;color:var(--muted);margin-bottom:24px;}
+.rows{margin-top:28px;border-bottom:1px solid var(--line);}
+.row{display:flex;justify-content:space-between;align-items:center;gap:16px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:18px 4px;}
+.row:hover{background:var(--cream);}
+.row b{display:block;font-weight:600;font-size:18px;}
+.row span{color:var(--muted);font-size:14px;}
+.row i{font-style:normal;color:var(--gold);font-size:20px;}
+.link{background:none;border:0;padding:0;color:var(--green2);text-decoration:underline;text-underline-offset:3px;}
+.btn{display:inline-block;background:var(--green);color:var(--on-green);border:1px solid var(--green);padding:13px 22px;border-radius:10px;font-weight:600;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.ghost{background:none;color:var(--ink);border-color:var(--line);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;padding:9px 16px;}
+.chip[aria-pressed="true"]{background:var(--green);color:var(--on-green);border-color:var(--green);}
+input[type=text],input[type=tel],input[type=number],input[type=date],input[type=month],textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+textarea{min-height:88px;resize:vertical;}
+input.edit{width:110px;padding:6px 8px;font-size:14px;}
+label.f{display:block;margin:16px 0 6px;font-weight:500;}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.drop{display:block;border:1px dashed var(--muted);border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;margin:20px 0;}
+.drop:hover,.drop.on{background:var(--cream);border-color:var(--gold);}
+.drop input{display:none;}
+.tbl{overflow-x:auto;margin:16px 0;}
+table{border-collapse:collapse;width:100%;font-size:15px;}
+th,td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--line);white-space:nowrap;}
+th{font-weight:500;color:var(--muted);}
+.fl{font-size:13px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);}
+.fl.ok{color:var(--ok);}
+.fl.borderline,.fl.low,.fl.high{color:var(--warn);border-color:var(--warn);}
+.fl.abnormal{color:var(--bad);border-color:var(--bad);}
+.q{padding:20px 0;border-top:1px solid var(--line);}
+.q b{font-weight:600;}
+.aff{font-size:13px;color:var(--muted);}
+.banner{border:1px solid var(--bad);border-radius:12px;padding:16px;margin:20px 0;}
+.banner b{color:var(--bad);}
+.note{background:var(--cream);border-radius:12px;padding:14px 16px;margin:16px 0;font-size:15px;}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0;}
+.tier{background:none;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:left;}
+.tier b{display:block;font-weight:600;}
+.tier span{color:var(--muted);font-size:14px;}
+.tier[aria-pressed="true"]{border-color:var(--gold);background:var(--cream);box-shadow:inset 0 0 0 1px var(--gold);}
+.it{display:grid;grid-template-columns:24px 1fr auto;gap:12px;padding:14px 0;border-top:1px solid var(--line);align-items:start;}
+.it input{width:20px;height:20px;margin-top:3px;accent-color:var(--green2);}
+.it .nm{font-weight:500;}
+.it .pr{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.pill{display:inline-block;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin:6px 6px 0 0;color:var(--muted);}
+.tag{font-size:13px;color:var(--muted);}
+.gain{color:var(--warn);font-size:13px;}
+details{margin:8px 0;}
+summary{cursor:pointer;font-weight:600;padding:12px 0;}
+.sum{border-top:1px solid var(--line);padding-top:14px;margin-top:20px;font-variant-numeric:tabular-nums;}
+.sum div{display:flex;justify-content:space-between;padding:3px 0;}
+.sum .tot{font-size:20px;font-weight:600;padding-top:10px;}
+.bar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;}
+.bar .p{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;}
+.rt{display:grid;grid-template-columns:60px 1fr;gap:2px 16px;margin:16px 0;}
+.rt .t{font-variant-numeric:tabular-nums;color:var(--green2);font-weight:600;padding:10px 0;border-top:1px solid var(--line);}
+.rt .d{padding:10px 0;border-top:1px solid var(--line);}
+.rt .d span{display:block;color:var(--muted);font-size:14px;}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 16px;margin:12px 0;}
+.kv dt{color:var(--muted);} .kv dd{margin:0;}
+.foot{color:var(--muted);font-size:13px;padding-top:20px;padding-bottom:32px;border-top:1px solid var(--line);}
+.ov{color:var(--bad);}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--green2);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+@media (max-width:520px){.tiers{grid-template-columns:1fr;}.kv{grid-template-columns:1fr;}.it{grid-template-columns:24px 1fr;}.it .pr{grid-column:2;}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap topin">
+    <div class="logo"><span class="lg">PRIME</span><span class="lgs">green clinic</span></div>
+    <nav class="tabs" aria-label="Режим">
+      <button data-a="view" data-v="patient" aria-pressed="true">Пациент</button>
+      <button data-a="view" data-v="clinic" aria-pressed="false">Для клиники</button>
+    </nav>
+  </div>
+  <div class="prog"><i id="pbar"></i></div>
+</header>
+<main class="wrap" id="app"></main>
+<footer class="wrap foot">Сервис не ставит диагноз, он подбирает обследования. ИИ извлекает, код проверяет, человек подтверждает. Цены и правила в демо — утверждаются врачами и прайсом PRIME.</footer>
+
+<script>
+'use strict';
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => (n==null?0:Math.round(n)).toLocaleString('ru-RU') + ' ₸';
+const DAY = 864e5;
+const todayISO = () => new Date().toISOString().slice(0,10);
+const fmt = d => d ? new Date(d + 'T12:00').toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : 's'+Date.now()+Math.random().toString(16).slice(2));
+
+async function api(path, opts={}){
+  const res = await fetch(path, {headers:{}, ...opts});
+  let data = null;
+  try { data = await res.json(); } catch(e){}
+  if (!res.ok){
+    const detail = data && data.detail;
+    const msg = typeof detail === 'string' ? detail : (data && (data.error || detail)) || ('HTTP '+res.status);
+    throw Object.assign(new Error(msg), {status:res.status, data});
+  }
+  return data;
+}
+const getJSON = (p) => api(p);
+const postJSON = (p, body) => api(p, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+const postFile = (p, file) => { const fd = new FormData(); fd.append('file', file); return api(p, {method:'POST', body:fd}); };
+
+/* ============ state ============ */
+const S = {
+  view:'patient', step:0, done:false,
+  goal:null, sex:null, age:null,
+  patientId:null,
+  pdfFile:null, pdfOut:null, pdfBusy:false, pdfMsg:'',
+  complaints:'',
+  tier:'rec', plan:null, planBusy:false,
+  lead:{name:'', phone:'', date:'', consent:false},
+  session:uuid(),
+  llm:null,
+  clinic:{metrics:null, bookings:null}
+};
+let CATALOG = null;
+const TIERNAME = {required:'обязательно', recommended:'рекомендуем', optional:'по желанию'};
+const TIER_LABEL = {min:'Минимум', rec:'Рекомендуем', max:'Максимум'};
+
+function ev(step, meta){ try{ postJSON('/api/events', {session_id:S.session, step, meta}); }catch(e){} }
+
+function goalInfo(code){ return CATALOG ? CATALOG.goals.find(g => g.code === code) : null; }
+function tierPrice(level){
+  if (!CATALOG || !S.goal) return null;
+  const p = CATALOG.packages.find(x => x.goal_code === S.goal && x.level === level);
+  return p ? p.price_kzt : null;
+}
+function activeItems(){ return S.plan ? S.plan.items.filter(i => i.include) : []; }
+function planPrice(){ return S.plan ? S.plan.personal_price_kzt : 0; }
+
+/* ============ data loading ============ */
+async function loadCatalog(){
+  if (CATALOG) return CATALOG;
+  CATALOG = await getJSON('/api/catalog');
+  return CATALOG;
+}
+async function loadLlm(){ try { S.llm = await getJSON('/api/llm/status'); } catch(e){ S.llm = null; } }
+
+async function ensurePatient(){
+  if (S.patientId) return S.patientId;
+  const g = goalInfo(S.goal);
+  const body = {
+    first_name: S.lead.name || (g ? 'Пациент' : 'Пациент'),
+    last_name: '', sex: S.sex || 'f',
+    birth_year: S.age ? (new Date().getFullYear() - S.age) : null,
+    phone: S.lead.phone || null,
+    consent_health: true
+  };
+  const p = await postJSON('/api/patients', body);
+  S.patientId = p.id;
+  return p.id;
+}
+
+/* ============ views ============ */
+const spinner = () => '<span class="spinner"></span>';
+
+async function viewStart(){
+  await loadCatalog();
+  const goals = CATALOG.goals;
+  return `<h1>Чекап, собранный под вас</h1>
+  <p class="lead">Скажите, зачем он нужен. Мы соберём список обследований без повторов и покажем, за что вы платите.</p>
+  <div class="rows">${goals.map(g => `<button class="row" data-a="goal" data-v="${g.code}"><div><b>${esc(g.name)}</b><span>${esc(g.description)}</span></div><i>›</i></button>`).join('')}</div>
+  <p style="margin-top:24px"><button class="link" data-a="demo">Посмотреть на примере клиента PRIME с историей обследований</button></p>`;
+}
+
+function viewProfile(){
+  const g = goalInfo(S.goal) || {};
+  const fixedSex = g.sex === 'f' || g.sex === 'm';
+  if (fixedSex && S.sex !== g.sex) S.sex = g.sex;
+  const okAge = S.age >= 18 && S.age <= 100;
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>${S.goal === 'parents_child' ? 'О вашем родственнике' : 'Немного о вас'}</h2>
+  <p class="muted">Возраст и пол определяют, какие обследования нужны в первую очередь.</p>
+  ${fixedSex ? '' : `<label class="f">Пол</label><div class="chips">${[['f','Женский'],['m','Мужской']].map(([v,l]) => `<button class="chip" data-a="sex" data-v="${v}" aria-pressed="${S.sex===v}">${l}</button>`).join('')}</div>`}
+  <label class="f" for="age">Возраст, полных лет</label>
+  <input id="age" type="number" inputmode="numeric" min="18" max="100" value="${S.age ?? ''}" style="max-width:160px">
+  <p class="small muted" id="agehint">${S.age && S.age < 18 ? 'Детские программы подбираются отдельно. Для взрослых укажите возраст от 18.' : ''}</p>
+  <p><button class="btn" data-a="next" ${S.sex && okAge ? '' : 'disabled'}>Дальше</button></p>`;
+}
+
+function confirmTable(){
+  const rows = S.pdfOut.rows;
+  if (!rows.length) return '<div class="note">Показатели не найдены. Проверьте файл или введите значения вручную.</div>';
+  const trs = rows.map((r, i) => {
+    const dispVal = (r.value_std != null) ? r.value_std : r.value;
+    const dispUnit = r.std_unit || r.unit;
+    const status = r.status || (r.ok ? 'ok' : 'flag');
+    const flagCls = r.ok ? (status==='abnormal'?'abnormal':status==='borderline'?'borderline':'ok') : 'abnormal';
+    const flagTxt = r.ok ? (status==='abnormal'?'отклонение':status==='borderline'?'на границе':'в норме') : 'проверьте';
+    const valKey = r.code || r.name;
+    return `<tr>
+      <td>${esc(r.canonical_name || r.name)}${r.flags && r.flags.length ? `<div class="small muted">${esc(r.flags.join('; '))}</div>` : ''}</td>
+      <td><input class="edit" data-rw="${i}" data-f="value" value="${esc(dispVal)}"> <input class="edit" data-rw="${i}" data-f="unit" value="${esc(dispUnit || '')}" style="width:80px"></td>
+      <td>${esc(r.reference || '')}</td>
+      <td><span class="fl ${flagCls}">${flagTxt}</span></td>
+      <td>${esc(r.date || '')}</td>
+      <td style="text-align:center"><input type="checkbox" data-rw="${i}" data-f="remove" ${r.ok ? 'checked' : ''} aria-label="удалить"></td>
+    </tr>`;
+  }).join('');
+  return `<div class="tbl"><table><thead><tr><th>Показатель</th><th>Значение</th><th>Норма</th><th>Статус</th><th>Дата</th><th>✔</th></tr></thead><tbody>${trs}</tbody></table></div>
+  <p class="small muted">Проверьте значения — только подтверждённые попадут в карту здоровья и повлияют на состав. <span class="muted">${S.pdfOut.ok_count} без замечаний${S.pdfOut.flagged_count ? `, ${S.pdfOut.flagged_count} требует проверки` : ''} · ${S.pdfOut.provider}</span></p>`;
+}
+
+function viewResults(){
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>Результаты анализов</h2>
+  <p class="muted">Загрузите PDF из клиники, eGov или DamuMed. Мы найдём показатели и не будем назначать заново то, что уже есть свежее.</p>
+  <label class="f" style="display:flex;gap:10px;font-weight:400;align-items:flex-start"><input id="consentPdf" type="checkbox" style="width:20px;height:20px;margin-top:3px;accent-color:var(--green2)"> Даю согласие на обработку данных о здоровье из файла для подбора чекапа</label>
+  ${S.pdfOut ? `${confirmTable()}
+    <p style="margin-top:10px"><button class="btn" data-a="confirmPdf" ${S.pdfBusy?'disabled':''}>${S.pdfBusy?spinner()+'': ''}Подтвердить и продолжить</button>
+    <button class="btn ghost" data-a="clearres">Загрузить другой</button></p>`
+  : `
+  <label class="drop" id="drop"><input type="file" id="file" accept="application/pdf,.pdf"><b>Выберите PDF</b><br><span class="muted">или перетащите файл сюда</span></label>
+  ${S.pdfMsg ? `<div class="note">${esc(S.pdfMsg)}</div>` : ''}
+  ${S.pdfBusy ? `<p class="muted">${spinner()} Разбираем PDF…</p>` : ''}
+  <p class="small"><button class="link" data-a="skipres">У меня нет результатов</button></p>`}`;
+}
+
+function viewQuestions(){
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>Уточним несколько вещей</h2>
+  <p class="muted">Опишите, что беспокоит своими словами — учтём при подборе. Можно пропустить.</p>
+  <div class="q"><b>Что беспокоит? Необязательно</b>
+    <textarea id="complaint" placeholder="Например: часто устаю, болит голова, выпадают волосы">${esc(S.complaint)}</textarea>
+    <p class="small muted">Если описаны серьёзные симптомы (боль в груди, одышка в покое, кровь в стуле), система предложит сначала обратиться к врачу.</p></div>
+  <p><button class="btn" data-a="next">Собрать чекап</button></p>`;
+}
+
+function planRow(it){
+  const label = TIERNAME[it.label] || it.label;
+  return `<div class="it"><input type="checkbox" data-a="tog" data-id="${it.test_code}" ${it.include ? 'checked' : ''} aria-label="${esc(it.name)}">
+    <div><div class="nm">${esc(it.name)} <span class="tag">${label}</span></div>
+    ${it.note ? `<div class="small muted" style="margin-top:4px">${esc(it.note)}</div>` : ''}
+    ${it.prep ? `<div class="small muted">Подготовка: ${esc(it.prep)}</div>` : ''}</div>
+    <div class="pr">${money(it.price_kzt)}</div></div>`;
+}
+function viewPlan(){
+  const P = S.plan;
+  if (S.planBusy) return `<button class="back" data-a="back">‹ Назад</button><h2>Ваш чекап</h2><p class="muted">${spinner()} Считаем состав и цену…</p>`;
+  if (!P) return `<button class="back" data-a="back">‹ Назад</button><h2>Ваш чекап</h2><p class="muted">Соберите план на шаге с жалобами.</p>`;
+  const need = P.items.filter(i => i.include && !i.skipped);
+  const skipped = P.items.filter(i => i.skipped);
+  const g = goalInfo(S.goal);
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>Ваш чекап</h2>
+  <p class="muted">${esc(g ? g.name : '')}, ${S.sex === 'f' ? 'женщина' : 'мужчина'}, ${S.age} лет. Уберите или добавьте позиции — цена пересчитается по правилам.</p>
+  ${P.red_flags && P.red_flags.length ? `<div class="banner"><b>Сначала к врачу.</b> ${esc((P.red_flags||[]).join(', '))}. ${esc(P.stop_message || '')}</div>` : ''}
+  <div class="tiers">${[['min','min'],['rec','rec'],['max','max']].map(([k,l]) => `<button class="tier" data-a="tier" data-v="${k}" aria-pressed="${S.tier===k}"><b>${TIER_LABEL[k]}</b><span>${money(tierPrice(k))}</span></button>`).join('')}</div>
+  ${P.risk_notes && P.risk_notes.length ? `<h3>По вашим результатам</h3>${P.risk_notes.map(t=>`<p style="margin-bottom:6px">${esc(t)}</p>`).join('')}<p class="small muted">Это повод обсудить показатели с врачом, а не диагноз.</p>` : ''}
+  <h3>Нужно сдать</h3>${need.length ? need.map(planRow).join('') : '<div class="note">По вашим данным всё нужное уже сдано и действует.</div>'}
+  ${skipped.length ? `<details open><summary>Уже есть, повторять не нужно (${skipped.length})</summary>${skipped.map(x => `<div class="it"><span></span><div><div class="nm">${esc(x.name)}</div><div class="small muted">${esc(x.skip_reason || '')}</div></div><div class="pr muted"><s>${money(x.price_kzt)}</s></div></div>`).join('')}</details>` : ''}
+  ${P.repeat_soon && P.repeat_soon.length ? `<h3>Скоро истекает срок</h3>${P.repeat_soon.map(t=>`<p class="small">${esc(t)}</p>`).join('')}` : ''}
+  <div class="sum">
+    <div><span>Пакет «${esc(TIER_LABEL[S.tier])}»</span><span>${money(P.package_price_kzt)}</span></div>
+    ${P.dedup_saved_kzt ? `<div class="muted"><span>Уже сдано (не повторяем)</span><span>−${money(P.dedup_saved_kzt)}</span></div>` : ''}
+    <div class="tot"><span>Ваш чекап</span><span>${money(P.personal_price_kzt)}</span></div>
+    <div class="muted small"><span>Продолжительность дня</span><span>≈ ${Math.floor(P.total_duration_min/60)} ч ${P.total_duration_min%60} мин</span></div>
+  </div>
+  <div class="bar"><div><div class="p">${money(P.personal_price_kzt)}</div><div class="small muted">${need.length} позиций</div></div>
+    <button class="btn" data-a="next" ${need.length ? '' : 'disabled'}>Выбрать дату</button></div>`;
+}
+
+function viewBook(){
+  const P = S.plan;
+  const R = P ? P.route : [];
+  const d = S.lead.date ? new Date(S.lead.date + 'T12:00') : null;
+  const tooLate = d && d.getDay() === 6 && d.getTime() < Date.now();
+  const mins = P ? P.total_duration_min : 0;
+  return `<button class="back" data-a="back">‹ Назад</button>
+  <h2>День чекапа</h2>
+  <p class="muted">Всё в один визит. Примерно ${Math.floor(mins/60)} ч ${mins%60} мин. Маршрут строится движком: сначала кровь натощак, затем обследования, в конце врач.</p>
+  ${R.length ? `<div class="rt">${R.map(s => `<div class="t">${esc(s.start)}</div><div class="d">${esc(s.name)}<span>${esc(s.station)}${s.prep ? ' · ' + esc(s.prep) : ''}</span></div>`).join('')}<div class="t">${esc(R[R.length-1].end)}</div><div class="d"><b>Готово</b></div></div>` : ''}
+  <label class="f" for="date">Дата</label>
+  <input id="date" type="date" value="${esc(S.lead.date)}" min="${new Date(Date.now()+DAY).toISOString().slice(0,10)}" style="max-width:220px">
+  <p class="small muted" id="datehint">Пн–Пт 8:00–20:00, сб 9:00–17:00, воскресенье выходной.</p>
+  <label class="f" for="name">Имя</label><input id="name" type="text" autocomplete="name" value="${esc(S.lead.name)}">
+  <label class="f" for="phone">Телефон</label><input id="phone" type="tel" autocomplete="tel" placeholder="+7 ___ ___ __ __" value="${esc(S.lead.phone)}">
+  <label class="f" style="display:flex;gap:10px;font-weight:400;align-items:flex-start"><input id="consent" type="checkbox" ${S.lead.consent?'checked':''} style="width:20px;height:20px;margin-top:3px;accent-color:var(--green2)"> Согласен на обработку персональных данных о здоровье для подбора и записи на чекап</label>
+  <p style="margin-top:20px"><button class="btn" id="bookBtn" data-a="book" ${S.bookBusy?'disabled':''} ${S.bookBusy?spinner()+'':''}>Записаться · ${money(planPrice())}</button></p>`;
+}
+
+function healthMapHtml(hm){
+  if (!hm) return '';
+  const rows = (hm.results || []).map(r => {
+    const st = r.status || 'ok';
+    const cls = st==='abnormal'?'abnormal':st==='borderline'?'borderline':'ok';
+    const txt = st==='abnormal'?'отклонение':st==='borderline'?'на границе':'в норме';
+    return `<tr><td>${esc(r.indicator_code)}</td><td>${esc(r.value_text)} ${esc(r.unit||'')}</td><td>${esc(r.reference||'')}</td><td><span class="fl ${cls}">${txt}</span></td><td>${fmt(r.exam_date)}</td></tr>`;
+  }).join('');
+  const repeat = (hm.repeat_soon || []).map(r => {
+    const past = new Date(r.valid_until+'T12:00') < new Date();
+    return `<div class="row" style="cursor:default"><div><b style="font-size:16px;font-weight:500">${esc(r.indicator_code)}</b><span>до ${fmt(r.valid_until)}</span></div><span class="${past?'ov':''}">${r.days_left<0?'просрочено':'через '+r.days_left+' дн.'}</span></div>`;
+  }).join('');
+  return `<h3>Карта здоровья</h3>
+  ${rows ? `<div class="tbl"><table><thead><tr><th>Показатель</th><th>Результат</th><th>Норма</th><th>Статус</th><th>Дата</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<p class="muted">Результатов пока нет. После подтверждения файла они появятся здесь.</p>'}
+  ${(hm.repeat_soon||[]).length ? `<h3>Когда повторить</h3><div class="rows" style="margin-top:8px">${repeat}</div>` : ''}`;
+}
+
+async function viewDone(){
+  let hm = null;
+  if (S.patientId){ try { hm = await getJSON(`/api/patients/${S.patientId}/healthmap`); } catch(e){} }
+  return `<h1>Вы записаны</h1>
+  <p class="lead">${esc(S.lead.name)}, ждём вас ${fmt(S.lead.date)}. Накануне пришлём маршрут и подготовку. ${S.lastBooking ? 'Заявка ' + esc(S.lastBooking.id) + ' передана администратору клиники.' : ''}</p>
+  ${healthMapHtml(hm)}
+  <p class="small muted">Демо-окружение: уведомления не отправляются. В пилоте напоминания уходят в WhatsApp/SMS за день до визита и по срокам повторов.</p>
+  <p><button class="btn ghost" data-a="reset">Начать заново</button> <button class="btn" data-a="view" data-v="clinic">Что увидит клиника</button></p>`;
+}
+
+async function viewClinic(){
+  try {
+    const [m, b] = await Promise.all([getJSON('/api/clinic/metrics'), getJSON('/api/clinic/bookings')]);
+    S.clinic.metrics = m; S.clinic.bookings = b.bookings;
+  } catch(e){ /* keep stale */ }
+  const m = S.clinic.metrics, b = S.clinic.bookings || [];
+  const steps = [['goal','Цель выбрана'],['checkup','План собран'],['pdf_extracted','PDF разобран'],['pdf_confirmed','Значения подтверждены'],['booked','Запись оформлена']];
+  const evs = (m && m.events) || {};
+  const lvl = (m && m.level_distribution) || {};
+  return `<h1>Для клиники</h1><p class="lead">Так выглядят заявки и метрики воронки. Администратор звонит, уже зная профиль, состав и цену.</p>
+  ${m ? `<h3>Воронка</h3><div class="rows" style="margin-top:8px">${steps.map(([k,l]) => `<div class="row" style="cursor:default"><div><b style="font-size:16px;font-weight:500">${l}</b></div><span>${evs[k]||0}</span></div>`).join('')}
+  <div class="row" style="cursor:default"><div><b style="font-size:16px;font-weight:500">Конверсия план → запись</b></div><span>${m.conversion_booked_pct}%</span></div></div>` : ''}
+  ${m ? `<h3>Деньги и экономия</h3>
+  <dl class="kv"><dt>Записей</dt><dd>${m.bookings}</dd>
+  <dt>Сумма по записям</dt><dd>${money(m.revenue_kzt)}</dd>
+  <dt>Сэкономлено дедупликацией</dt><dd>${money(m.dedup_saved_kzt)}</dd>
+  <dt>Выбор уровней</dt><dd>${Object.entries(lvl).map(([k,v])=>`${TIER_LABEL[k]||k}: ${v}`).join(', ')||'—'}</dd></dl>` : ''}
+  <h3>Заявки</h3>
+  ${b.length ? `<div class="tbl"><table><thead><tr><th>Дата</th><th>Пациент</th><th>Телефон</th><th>Сумма</th><th>Скидка дедуп</th><th>Статус</th></tr></thead><tbody>${b.map(x => `<tr><td>${fmt(x.date)}</td><td>${esc(x.patient)}</td><td>${esc(x.phone||'')}</td><td>${money(x.total_kzt)}</td><td>${x.dedup_saved_kzt?'−'+money(x.dedup_saved_kzt):'—'}</td><td>${esc(x.status)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Заявок пока нет. Пройдите анкету во вкладке «Пациент».</p>'}
+  <p class="small muted">Каждый шаг фиксируется как событие: по ним считаются конверсия, время до записи и доля выбора «Рекомендуем».</p>`;
+}
+
+/* ============ render & events ============ */
+function render(){
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.view)));
+  $('#pbar').style.width = (S.view === 'clinic' || S.done ? 100 : S.step / 5 * 100) + '%';
+  const f = S.view === 'clinic' ? viewClinic : S.done ? viewDone : [viewStart, viewProfile, viewResults, viewQuestions, viewPlan, viewBook][S.step];
+  const p = f();
+  const el = $('#app');
+  if (p && p.then){
+    el.innerHTML = '<p class="muted">' + spinner() + ' Загружаем…</p>';
+    p.then(html => { if (S._renderTok === render._tok){ el.innerHTML = html; } }).catch(err => {
+      if (S._renderTok === render._tok) el.innerHTML = `<div class="note">Ошибка загрузки: ${esc(err.message)}</div>`;
+    });
+  } else {
+    el.innerHTML = p;
+  }
+}
+render._tok = 0;
+function go(step){ render._tok = ++render._seq; S.step = step; render(); window.scrollTo({top:0}); }
+render._seq = 0;
+function rerender(){ render._tok = ++render._seq; render(); }
+
+async function rebuildCheckup(desired){
+  S.planBusy = true; rerender();
+  const all = S.plan ? S.plan.items.map(i => i.test_code) : [];
+  const desiredSet = desired || new Set(activeItems().map(i => i.test_code));
+  const exclude = all.filter(c => !desiredSet.has(c));
+  const include = [...desiredSet];
+  const body = {
+    goal_code:S.goal, level:S.tier, sex:S.sex, age:S.age,
+    patient_id:S.patientId || undefined, complaints:S.complaint || undefined,
+    session_id:S.session, exclude, include
+  };
+  try { S.plan = await postJSON('/api/checkup', body); }
+  catch(e){ S.planMsg = e.message; }
+  S.planBusy = false;
+  rerender();
+}
+
+function setPlanForTier(level){
+  S.tier = level;
+  S.planBusy = true; rerender();
+  const pid = S.patientId;
+  const body = { goal_code:S.goal, level, sex:S.sex, age:S.age, patient_id:pid||undefined,
+    complaints:S.complaint||undefined, session_id:S.session };
+  postJSON('/api/checkup', body).then(p => { S.plan = p; S.planBusy=false; rerender(); })
+    .catch(e => { S.planMsg = e.message; S.planBusy=false; rerender(); });
+}
+
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-a]'); if (!el) return;
+  const a = el.dataset.a, v = el.dataset.v;
+  if (a === 'view'){ S.view = v; rerender(); window.scrollTo({top:0}); }
+  else if (a === 'goal'){ S.goal = v; const g = goalInfo(v); if (g && (g.sex==='f'||g.sex==='m')) S.sex = g.sex; ev('goal'); go(1); }
+  else if (a === 'demo'){ await loadCatalog(); S.goal = 'for_myself'; S.sex = 'f'; S.age = 34; S.demo = true; ev('goal'); go(1); }
+  else if (a === 'sex'){ S.sex = v; rerender(); }
+  else if (a === 'back'){ go(Math.max(0, S.step - 1)); }
+  else if (a === 'next'){
+    if (S.step === 1){ try{ await ensurePatient(); }catch(err){} ev('profile'); }
+    if (S.step === 3){ ev('plan_request'); setPlanForTier(S.tier); go(4); return; }
+    if (S.step === 4){ ev('plan_built'); go(5); }
+  }
+  else if (a === 'clearres'){ S.pdfOut = null; S.pdfFile = null; S.pdfMsg = ''; rerender(); }
+  else if (a === 'skipres'){ S.pdfOut = null; ev('results_skipped'); go(3); }
+  else if (a === 'confirmPdf'){
+    S.pdfBusy = true; rerender();
+    try {
+      const pid = await ensurePatient();
+      const rows = S.pdfOut.rows.map((r, i) => {
+        const inp = document.querySelectorAll(`[data-rw="${i}"]`);
+        let value = r.value_std != null ? r.value_std : r.value, unit = r.std_unit || r.unit, remove = false;
+        inp.forEach(x => { const f = x.dataset.f; if (f==='value') value = x.value; else if (f==='unit') unit = x.value; else if (f==='remove') remove = !x.checked; });
+        return { name: r.code || r.name, value, unit, reference: r.reference, date: r.date, remove };
+      });
+      await postJSON(`/api/pdf/${S.pdfOut.file_id}/confirm`, { patient_id: pid, rows });
+      ev('pdf_confirmed');
+      go(3);
+    } catch(err){ S.pdfMsg = err.message; S.pdfBusy = false; rerender(); }
+  }
+  else if (a === 'tier'){ setPlanForTier(v); }
+  else if (a === 'tog'){
+    const id = el.dataset.id;
+    const cur = new Set(activeItems().map(i => i.test_code));
+    if (cur.has(id)) cur.delete(id); else cur.add(id);
+    rebuildCheckup(cur);
+  }
+  else if (a === 'book'){
+    S.bookBusy = true; rerender();
+    try {
+      const pid = await ensurePatient();
+      const b = await postJSON('/api/bookings', {
+        patient_id: pid, visit_date: S.lead.date, checkup: S.plan || {},
+        channel: 'web', consent: S.lead.consent, phone: S.lead.phone || null
+      });
+      S.lastBooking = b; ev('booked', {date:S.lead.date, price:planPrice()});
+      S.done = true; S.bookBusy = false; rerender(); window.scrollTo({top:0});
+    } catch(err){ S.bookBusy = false; S.bookMsg = err.message; rerender(); alert('Не удалось записаться: ' + err.message); }
+  }
+  else if (a === 'reset'){
+    Object.assign(S, {view:'patient', step:0, done:false, goal:null, sex:null, age:null, patientId:null,
+      pdfFile:null, pdfOut:null, pdfBusy:false, pdfMsg:'', complaints:'', tier:'rec', plan:null, planBusy:false,
+      lead:{name:'',phone:'',date:'',consent:false}, session:uuid(), lastBooking:null});
+    rerender(); window.scrollTo({top:0});
+  }
+});
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'age'){ S.age = t.value === '' ? null : Math.round(+t.value); const ok = S.age >= 18 && S.age <= 100; const b = document.querySelector('[data-a="next"]'); if (S.step===1 && b) b.disabled = !(S.sex && ok); const h = $('#agehint'); if (h) h.textContent = S.age && S.age < 18 ? 'Детские программы подбираются отдельно. Для взрослых укажите возраст от 18.' : ''; }
+  else if (t.id === 'complaint'){ S.complaint = t.value; }
+  else if (t.id === 'name'){ S.lead.name = t.value; syncBook(); }
+  else if (t.id === 'phone'){ S.lead.phone = t.value; syncBook(); }
+  else if (t.id === 'date'){ S.lead.date = t.value; syncBook(); }
+  else if (t.id === 'consent'){ S.lead.consent = t.checked; syncBook(); }
+  else if (t.id === 'consentPdf'){ /* consent gate for upload */ }
+});
+function syncBook(){
+  const d = S.lead.date ? new Date(S.lead.date + 'T12:00') : null;
+  const okDate = d && d.getDay() !== 0 && d.getTime() > Date.now() - DAY;
+  const b = $('#bookBtn');
+  if (b) b.disabled = !(okDate && S.lead.name.trim().length > 1 && S.lead.phone.replace(/\D/g,'').length >= 10 && S.lead.consent);
+  const h = $('#datehint');
+  if (h && d && d.getDay() === 0) h.textContent = 'Воскресенье выходной. Выберите другой день.';
+}
+document.addEventListener('change', async e => {
+  const t = e.target;
+  if (t.id === 'file' && t.files && t.files[0]) await handleFile(t.files[0]);
+});
+document.addEventListener('dragover', e => { if (e.target.closest && e.target.closest('#drop')){ e.preventDefault(); e.target.closest('#drop').classList.add('on'); } });
+document.addEventListener('dragleave', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) d.classList.remove('on'); });
+document.addEventListener('drop', e => { const d = e.target.closest && e.target.closest('#drop'); if (d){ e.preventDefault(); d.classList.remove('on'); const f = e.dataTransfer.files[0]; if (f) handleFile(f); } });
+
+async function handleFile(file){
+  const consent = document.querySelector('#consentPdf');
+  if (consent && !consent.checked){ S.pdfMsg = 'Сначала отметьте согласие на обработку данных о здоровье.'; rerender(); return; }
+  S.pdfFile = file; S.pdfBusy = true; S.pdfMsg = ''; S.pdfOut = null; rerender();
+  ev('pdf_uploaded', {name:file.name});
+  try {
+    const out = await postFile('/api/pdf', file);
+    S.pdfOut = out; ev('pdf_extracted', {ok:out.ok_count, flagged:out.flagged_count});
+    S.pdfBusy = false; rerender();
+  } catch(err){
+    S.pdfBusy = false;
+    if (err.status === 422){
+      const d = err.data || {};
+      S.pdfMsg = (d.error || 'Это скан без текстового слоя. ') + ' В демо OCR подключается отдельно (Qwen-Max для обезличенных файлов или PaddleOCR). Пока введите значения вручную у администратора клиники.';
+    } else {
+      S.pdfMsg = 'Не удалось разобрать файл: ' + err.message;
+    }
+    rerender();
+  }
+}
+
+/* init */
+(async function init(){
+  await loadLlm();
+  render._tok = ++render._seq;
+  render();
+})();
+</script>
+</body>
+</html>
